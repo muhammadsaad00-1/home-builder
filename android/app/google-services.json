@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "27488843983",
+    "project_id": "bhc123-2ee17",
+    "storage_bucket": "bhc123-2ee17.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:27488843983:android:af17deb4e708fe02551fba",
+        "android_client_info": {
+          "package_name": "com.example.bhc"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTOskJJupLTpyFJms8fHUu8J_YzS30YMo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
