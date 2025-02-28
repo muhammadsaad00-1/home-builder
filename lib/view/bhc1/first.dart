@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shimmer/shimmer.dart';
 
 class FirstScreen extends StatefulWidget {
   @override
@@ -13,11 +14,11 @@ class FirstScreen extends StatefulWidget {
 }
 
 class _FirstScreenState extends State<FirstScreen> {
-  final String bucketPath = "gs://brighthomes-d1947.firebasestorage.app";
   List<Reference> imageRefs = [];
   Map<String, Uint8List> imageData = {};
   String? selectedImage;
   String? selectedImageUrl;
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -25,7 +26,6 @@ class _FirstScreenState extends State<FirstScreen> {
     fetchImageReferences();
   }
 
-  /// Fetch metadata (references) first
   Future<void> fetchImageReferences() async {
     try {
       final storageRef = FirebaseStorage.instance.ref("firstFloor");
@@ -33,6 +33,9 @@ class _FirstScreenState extends State<FirstScreen> {
 
       if (result.items.isEmpty) {
         debugPrint("No images found in firstFloor folder.");
+        setState(() {
+          isLoading = false;
+        });
         return;
       }
 
@@ -40,18 +43,19 @@ class _FirstScreenState extends State<FirstScreen> {
         imageRefs = result.items;
       });
 
-      // Fetch images asynchronously in parallel
       await fetchImagesParallel();
     } catch (e) {
       debugPrint("Error fetching images: $e");
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
-  /// Fetch images concurrently with size limit (parallel fetching)
   Future<void> fetchImagesParallel() async {
     final List<Future<void>> futures = imageRefs.map((ref) async {
       try {
-        Uint8List? data = await ref.getData(1024 * 500); // Limit to 500KB
+        Uint8List? data = await ref.getData(1024 * 500);
         if (data != null && mounted) {
           setState(() {
             imageData[ref.fullPath] = data;
@@ -62,10 +66,12 @@ class _FirstScreenState extends State<FirstScreen> {
       }
     }).toList();
 
-    await Future.wait(futures); // Wait for all images to load
+    await Future.wait(futures);
+    setState(() {
+      isLoading = false;
+    });
   }
 
-  /// Save selected facade image URL in Firestore
   Future<void> saveSelectedFacade() async {
     final user = FirebaseAuth.instance.currentUser;
 
@@ -86,7 +92,6 @@ class _FirstScreenState extends State<FirstScreen> {
       if (projectSnapshot.docs.isNotEmpty) {
         String projectId = projectSnapshot.docs.first.id;
 
-        // Update the latest project with the selected facade image
         await userDoc.collection('projects').doc(projectId).update({
           'selectedFacadeImage': selectedImageUrl,
           'updatedAt': FieldValue.serverTimestamp(),
@@ -106,9 +111,13 @@ class _FirstScreenState extends State<FirstScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text(
           'Select a Single Storey Facade',
-          style: GoogleFonts.roboto(color: appColors.orangee, fontSize: 20),
+          style: GoogleFonts.roboto(
+              color: appColors.orangee,
+              fontSize: 20,
+              fontWeight: FontWeight.w500),
         ),
         centerTitle: true,
         backgroundColor: Colors.white,
@@ -117,14 +126,33 @@ class _FirstScreenState extends State<FirstScreen> {
       body: Column(
         children: [
           Expanded(
-            child: imageRefs.isEmpty
-                ? const Center(child: CircularProgressIndicator())
+            child: isLoading
+                ? ListView.builder(
+                    padding: const EdgeInsets.all(10),
+                    itemCount: 5,
+                    itemBuilder: (context, index) {
+                      return Shimmer.fromColors(
+                        baseColor: Colors.grey[300]!,
+                        highlightColor: Colors.grey[100]!,
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(vertical: 8),
+                          height: 200,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white,
+                          ),
+                        ),
+                      );
+                    },
+                  )
                 : ListView.builder(
                     padding: const EdgeInsets.all(10),
                     itemCount: imageRefs.length,
                     itemBuilder: (context, index) {
                       String imagePath = imageRefs[index].fullPath;
                       bool isSelected = selectedImage == imagePath;
+                      String imageName =
+                          imagePath.split('/').last.split('.').first;
 
                       return GestureDetector(
                         onTap: () async {
@@ -170,7 +198,7 @@ class _FirstScreenState extends State<FirstScreen> {
                                   color: Colors.white,
                                 ),
                                 child: Text(
-                                  imagePath.split('/').last, // Display filename
+                                  imageName,
                                   style: const TextStyle(
                                     color: Colors.black,
                                     fontSize: 14,

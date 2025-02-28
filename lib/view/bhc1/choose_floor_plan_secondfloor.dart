@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:bhc/resources/components/appColors.dart';
+import 'package:bhc/view/bhc1/customize_home.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'dart:typed_data';
-import 'customize_home.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ChooseFloorPlanSecond extends StatefulWidget {
   const ChooseFloorPlanSecond({super.key});
@@ -13,50 +15,93 @@ class ChooseFloorPlanSecond extends StatefulWidget {
 }
 
 class _ChooseFloorPlanSecondState extends State<ChooseFloorPlanSecond> {
-  List<Uint8List?> imageDataList = [];
+  List<String> imageUrls = [];
   int selectedIndex = 0;
+  bool isLoading = true;
 
   final List<String> descriptions = [
-    "This is description for Floor Plan 1",
-    "This is description for Floor Plan 2",
-    "This is description for Floor Plan 3",
+    "5-bed, 3-bath home with a 2-car garage. Measures 11.30m wide for a 12.50m lot, extending 22.23m in length with a total area of 42.32sq, offering a spacious and luxurious layout.",
+    "3-bed, 2-bath home with a 2-car garage. Measures 8.42m wide for a 10.20m lot, extending 15.42m in length with a total area of 22.22sq, offering a compact and efficient layout.",
+    "4-bed, 2-bath home with a 2-car garage. Measures 15.09m wide for a 15.24m lot, extending 18.98m in length with a total area of 45.74sq, offering a spacious and well-designed layout.",
+    "4-bed, 3-bath home with a 2-car garage. Measures 8.40m wide for a 10.00m lot, extending 19.54m in length with a total area of 21.53sq, offering a compact and efficient layout.",
+    "4-bed, 2-bath home with a 2-car garage. Measures 11.63m wide for a 13.50m lot, extending 13.60m in length with a total area of 27.18sq, offering a spacious and functional layout.",
+    "5-bed, 3-bath home with a 2-car garage. Measures 14.80m wide for a 16.65m lot, extending 25.00m in length with a total area of 56.25sq, offering a spacious and luxurious layout.",
+    "3-bed, 2-bath home with a 2-car garage. Measures 9.00m wide for a 10.00m lot, extending 18.04m in length with a total area of 23.53sq, offering a practical and efficient layout.",
+    "6-bed, 5-bath home with a 4-car garage. Measures 19.00m wide, offering a total area of 72.54sq, providing a luxurious and spacious layout.",
+    "4-bed, 2-bath home with a 2-car garage. Measures 11.36m wide for a 12.56m lot, extending 25.68m in length with a total area of 35.60sq, offering a spacious and well-balanced layout.",
+    "4-bed, 3-bath home with a 2-car garage. Measures 10.88m wide for a 12.50m lot, extending 16.48m in length with a total area of 24.87sq, offering a spacious and functional layout.",
+    "4-bed, 3-bath home with a 2-car garage. Measures 11.96m wide for a 13.11m lot, extending 21.35m in length with a total area of 29.21sq, offering a spacious and well-designed layout.",
+    "4-bed, 3-bath home with a 2-car garage. Measures 13.04m wide for a 15.00m lot, extending 13.98m in length with a total area of 28.43sq, offering a spacious and well-balanced layout."
   ];
 
   @override
   void initState() {
     super.initState();
-    fetchFloorMapImages();
+    fetchFloorPlanImages();
   }
 
-  Future<void> fetchFloorMapImages() async {
+  Future<void> fetchFloorPlanImages() async {
     try {
-      final storageRef = FirebaseStorage.instanceFor(
-        bucket: "gs://brighthomes-d1947.firebasestorage.app",
-      ).ref("secondfloorplans");
-
+      final storageRef = FirebaseStorage.instance.ref("secondfloorplans");
       final ListResult result = await storageRef.listAll();
 
       if (result.items.isEmpty) {
         debugPrint("No images found in the secondfloorplans folder.");
+        setState(() {
+          isLoading = false;
+        });
         return;
       }
 
-      List<Uint8List?> images = await Future.wait(
+      List<String> urls = await Future.wait(
         result.items.map((ref) async {
-          try {
-            return await ref.getData(); // Fetches image data directly
-          } catch (e) {
-            debugPrint("Error fetching image data: \$e");
-            return null;
-          }
+          return await ref.getDownloadURL();
         }),
       );
 
       setState(() {
-        imageDataList = images;
+        imageUrls = urls;
+        isLoading = false;
       });
     } catch (e) {
-      debugPrint("Error fetching images: \$e");
+      debugPrint("Error fetching images: $e");
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _saveSelectedFloorPlan() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      debugPrint("No user logged in");
+      return;
+    }
+    if (imageUrls.isEmpty) {
+      debugPrint("No floor plan images available.");
+      return;
+    }
+    try {
+      DocumentReference userDoc =
+          FirebaseFirestore.instance.collection('users').doc(user.uid);
+      QuerySnapshot projectSnapshot = await userDoc
+          .collection('projects')
+          .orderBy('createdAt', descending: true)
+          .limit(1)
+          .get();
+      if (projectSnapshot.docs.isNotEmpty) {
+        String projectId = projectSnapshot.docs.first.id;
+        String selectedImageUrl = imageUrls[selectedIndex];
+        await userDoc.collection('projects').doc(projectId).update({
+          'selectedFloorPlan': selectedImageUrl,
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+        debugPrint("Floor plan saved: $selectedImageUrl");
+      } else {
+        debugPrint("No projects found for user.");
+      }
+    } catch (e) {
+      debugPrint("Error saving floor plan: $e");
     }
   }
 
@@ -95,11 +140,14 @@ class _ChooseFloorPlanSecondState extends State<ChooseFloorPlanSecond> {
               SizedBox(height: h * 0.02),
               SizedBox(
                 height: h * 0.45,
-                child: imageDataList.isEmpty
-                    ? const Center(child: CircularProgressIndicator())
+                child: imageUrls.isEmpty
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                        color: appColors.orangee,
+                      ))
                     : ListView.builder(
                         scrollDirection: Axis.horizontal,
-                        itemCount: imageDataList.length,
+                        itemCount: imageUrls.length,
                         itemBuilder: (context, index) {
                           return GestureDetector(
                             onTap: () {
@@ -119,12 +167,10 @@ class _ChooseFloorPlanSecondState extends State<ChooseFloorPlanSecond> {
                                 ),
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              child: imageDataList[index] != null
-                                  ? Image.memory(
-                                      imageDataList[index]!,
-                                      height: h * 0.45,
-                                    )
-                                  : const Icon(Icons.error),
+                              child: Image.network(
+                                imageUrls[index],
+                                height: h * 0.45,
+                              ),
                             ),
                           );
                         },
@@ -152,7 +198,8 @@ class _ChooseFloorPlanSecondState extends State<ChooseFloorPlanSecond> {
               Align(
                 alignment: Alignment.center,
                 child: InkWell(
-                  onTap: () {
+                  onTap: () async {
+                    await _saveSelectedFloorPlan();
                     Navigator.push(
                       context,
                       MaterialPageRoute(

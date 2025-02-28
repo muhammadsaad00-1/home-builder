@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart'; // Import for SystemNavigator.pop()
+import 'package:shimmer/shimmer.dart';
 
 import '../../resources/components/appColors.dart';
 import '../../resources/components/bottom_nav.dart';
@@ -21,6 +22,7 @@ class _HomeViewState extends State<HomeView> {
   int _selectedIndex = 0;
   List<Map<String, String>> projects = [];
   bool _isLoading = true; // Tracks loading state
+  String? _pressedProjectId;
 
   @override
   void initState() {
@@ -78,6 +80,20 @@ class _HomeViewState extends State<HomeView> {
         }
       },
       child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          backgroundColor: Colors.white,
+          elevation: 2,
+          automaticallyImplyLeading: false,
+          title: Text(
+            'Home',
+            style: TextStyle(color: appColors.orangee),
+          ),
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 3),
+            child: Image.asset('assets/images/logo.png'),
+          ),
+        ),
         bottomNavigationBar: CustomBottomNavigationBar(
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
@@ -95,27 +111,25 @@ class _HomeViewState extends State<HomeView> {
             padding: const EdgeInsets.all(9.0),
             child: Column(
               children: [
-                SizedBox(height: h * 0.03),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Home',
-                      style: GoogleFonts.roboto(
-                          color: appColors.orangee,
-                          fontSize: 22,
-                          fontWeight: FontWeight.w500),
-                    ),
-
-
-                  ],
-                ),
-                SizedBox(height: h * 0.02),
-
                 // Conditional UI Based on Project State
                 Expanded(
                   child: _isLoading
-                      ? const Center(child: CircularProgressIndicator())
+                      ? ListView.builder(
+                          itemCount: 6,
+                          itemBuilder: (context, index) => Shimmer.fromColors(
+                            baseColor: Colors.grey[300]!,
+                            highlightColor: Colors.grey[100]!,
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(
+                                  vertical: 8, horizontal: 20),
+                              height: 150,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          ),
+                        )
                       : projects.isEmpty
                           ? const Center(
                               child: Text(
@@ -131,9 +145,13 @@ class _HomeViewState extends State<HomeView> {
                               padding: const EdgeInsets.all(10),
                               itemCount: projects.length,
                               itemBuilder: (context, index) {
-                                return buildProjectTile(
-                                  projects[index]["projectId"]!,
-                                  projects[index]["projectName"]!,
+                                return Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 10),
+                                  child: buildProjectTile(
+                                    projects[index]["projectId"]!,
+                                    projects[index]["projectName"]!,
+                                  ),
                                 );
                               },
                             ),
@@ -148,7 +166,7 @@ class _HomeViewState extends State<HomeView> {
 
   /// **Creates a project tile that navigates to HomeDetailsView with projectId**
   Widget buildProjectTile(String projectId, String projectName) {
-    return InkWell(
+    return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
@@ -160,20 +178,72 @@ class _HomeViewState extends State<HomeView> {
           ),
         );
       },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-        child: Container(
-          padding: const EdgeInsets.all(15),
-          decoration: BoxDecoration(
-            color: appColors.orangee,
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: Text(
-            projectName,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.roboto(
-                color: Colors.white, fontSize: 18, fontWeight: FontWeight.w500),
-          ),
+      onTapDown: (_) {
+        setState(() {
+          _pressedProjectId = projectId;
+        });
+      },
+      onTapUp: (_) {
+        setState(() {
+          _pressedProjectId = null;
+        });
+      },
+      onTapCancel: () {
+        setState(() {
+          _pressedProjectId = null;
+        });
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 100),
+        width: 200,
+        height: 150,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 8,
+              spreadRadius: 2,
+              offset: const Offset(2, 4),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            Align(
+              alignment: Alignment.center,
+              child: AnimatedScale(
+                scale: _pressedProjectId == projectId ? 1.1 : 1.0,
+                duration: const Duration(milliseconds: 100),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset(
+                    'assets/firstFloor/Barbie_Facade.png',
+                    fit: BoxFit.fitHeight,
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 8,
+              left: 8,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.6),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  projectName,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

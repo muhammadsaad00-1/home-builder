@@ -1,4 +1,4 @@
-import 'package:bhc/view/auth/forgetpassword.dart';
+import 'package:bhc/view/auth/forgotpassword.dart';
 import 'package:bhc/view/auth/profile_creation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,6 +9,7 @@ import '../../resources/components/customTextField.dart';
 import '../../utils/utils.dart';
 import '../../view_model/auth_view_model.dart';
 import '../bhc1/floor_selection.dart';
+import 'forgotpassword.dart';
 
 class LoginViewUser extends StatefulWidget {
   LoginViewUser({super.key});
@@ -97,7 +98,10 @@ class _LoginViewUserState extends State<LoginViewUser> {
                     splashColor: Colors.transparent,
                     overlayColor: WidgetStatePropertyAll(Colors.transparent),
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=> ForgotPasswordView()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ForgotPasswordView()));
                       // Handle Forgot Password
                     },
                     child: const Align(

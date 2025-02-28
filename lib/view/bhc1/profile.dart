@@ -37,13 +37,15 @@ class _ProfileViewState extends State<ProfileView> {
     User? user = _auth.currentUser;
     if (user != null) {
       DocumentSnapshot userDoc =
-      await _firestore.collection('users').doc(user.uid).get();
+          await _firestore.collection('users').doc(user.uid).get();
 
       if (userDoc.exists) {
         setState(() {
           nameController.text = userDoc['name'] ?? '';
           emailController.text = userDoc['email'] ?? '';
-          contactController.text = userDoc['contact'] ?? '';
+          contactController.text = userDoc.data().toString().contains('contact')
+              ? userDoc['contact']
+              : '03xx-xxxxxxxx'; // Default if contact doesn't exist
           isLoading = false;
         });
       }
@@ -54,10 +56,12 @@ class _ProfileViewState extends State<ProfileView> {
   Future<void> _updateUserData() async {
     User? user = _auth.currentUser;
     if (user != null) {
-      await _firestore.collection('users').doc(user.uid).update({
+      await _firestore.collection('users').doc(user.uid).set({
         'name': nameController.text,
-        'contact': contactController.text,
-      });
+        'contact': contactController.text.isEmpty
+            ? "03xx-xxxxxxxx"
+            : contactController.text,
+      }, SetOptions(merge: true)); // Merges new fields instead of overwriting
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Profile updated successfully!')),
       );
@@ -93,124 +97,129 @@ class _ProfileViewState extends State<ProfileView> {
       child: Scaffold(
         body: SafeArea(
           child: isLoading
-              ? const Center(child: CircularProgressIndicator())
+              ? const Center(
+                  child: CircularProgressIndicator(
+                  color: appColors.orangee,
+                ))
               : SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: h * 0.02),
-                  Row(
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                const HomeView()),
-                          );
-                        },
-                        child: const Icon(
-                          Icons.arrow_back_ios,
-                          color: appColors.orangee,
-                          size: 20,
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: h * 0.02),
+                        Row(
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const HomeView()),
+                                );
+                              },
+                              child: const Icon(
+                                Icons.arrow_back_ios,
+                                color: appColors.orangee,
+                                size: 20,
+                              ),
+                            ),
+                            SizedBox(width: w * 0.3),
+                            Text(
+                              'Profile',
+                              style: GoogleFonts.roboto(
+                                color: appColors.orangee,
+                                fontSize: 22,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      SizedBox(width: w * 0.3),
-                      Text(
-                        'Profile',
-                        style: GoogleFonts.roboto(
-                          color: appColors.orangee,
-                          fontSize: 22,
-                          fontWeight: FontWeight.w500,
+                        SizedBox(height: h * 0.01),
+                        _buildProfileField(
+                          label: 'Full name',
+                          controller: nameController,
+                          icon: Icons.perm_identity_sharp,
+                          hint: "Enter your name",
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: h * 0.01),
-                  _buildProfileField(
-                    label: 'Full name',
-                    controller: nameController,
-                    icon: Icons.perm_identity_sharp,
-                    hint: "Enter your name",
-                  ),
-                  SizedBox(height: h * 0.02),
-                  _buildProfileField(
-                    label: 'Email address',
-                    controller: emailController,
-                    icon: Icons.email_outlined,
-                    hint: "Enter your email",
-                    isEnabled: false, // Email shouldn't be editable
-                  ),
-                  SizedBox(height: h * 0.02),
-                  _buildProfileField(
-                    label: 'Phone number',
-                    controller: contactController,
-                    icon: Icons.phone,
-                    hint: "Enter your phone number",
-                    keyboardType: TextInputType.phone,
-                  ),
-                  SizedBox(height: h * 0.04),
+                        SizedBox(height: h * 0.02),
+                        _buildProfileField(
+                          label: 'Email address',
+                          controller: emailController,
+                          icon: Icons.email_outlined,
+                          hint: "Enter your email",
+                          isEnabled: false, // Email shouldn't be editable
+                        ),
+                        SizedBox(height: h * 0.02),
+                        _buildProfileField(
+                          label: 'Phone number',
+                          controller: contactController,
+                          icon: Icons.phone,
+                          hint: "Enter your phone number",
+                          keyboardType: TextInputType.phone,
+                        ),
+                        SizedBox(height: h * 0.04),
 
-                  /// **Update Button**
-                  Align(
-                    alignment: Alignment.center,
-                    child: InkWell(
-                      onTap: _updateUserData,
-                      child: Container(
-                        height: 55,
-                        width: w * 0.9,
-                        decoration: BoxDecoration(
-                          color: Colors.blue,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            "Update Profile",
-                            style: TextStyle(
+                        /// **Update Button**
+                        Align(
+                          alignment: Alignment.center,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              border: Border.all(color: appColors.orangee),
                               color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 14,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: InkWell(
+                              onTap: _updateUserData,
+                              child: SizedBox(
+                                height: 55,
+                                width: w * 0.9,
+                                child: const Center(
+                                  child: Text(
+                                    "Update Profile",
+                                    style: TextStyle(
+                                      color: appColors.orangee,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: h * 0.02),
+                        SizedBox(height: h * 0.02),
 
-                  /// **Logout Button**
-                  Align(
-                    alignment: Alignment.center,
-                    child: InkWell(
-                      onTap: _logoutUser,
-                      child: Container(
-                        height: 55,
-                        width: w * 0.9,
-                        decoration: BoxDecoration(
-                          color: appColors.orangee,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            "Log out",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 14,
+                        /// **Logout Button**
+                        Align(
+                          alignment: Alignment.center,
+                          child: InkWell(
+                            onTap: _logoutUser,
+                            child: Container(
+                              height: 55,
+                              width: w * 0.9,
+                              decoration: BoxDecoration(
+                                color: appColors.orangee,
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  "Log out",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
+                        SizedBox(height: h * 0.01),
+                      ],
                     ),
                   ),
-                  SizedBox(height: h * 0.01),
-                ],
-              ),
-            ),
-          ),
+                ),
         ),
       ),
     );
@@ -241,7 +250,7 @@ Widget _buildProfileField({
         keyboardType: keyboardType,
         decoration: InputDecoration(
           contentPadding:
-          const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           prefixIcon: Icon(icon, color: Colors.black54, size: 28),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),

@@ -79,7 +79,7 @@ class _LoginFatherState extends State<LoginFather> {
                         );
                       },
                       child: Text(
-                        'Login as Admin',
+                        'Login as Site Builder',
                         textAlign: TextAlign.start,
                         style: GoogleFonts.poppins(
                           color: appColors.greyy,

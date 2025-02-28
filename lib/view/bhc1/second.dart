@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shimmer/shimmer.dart';
 
 class SecondScreen extends StatefulWidget {
   @override
@@ -13,11 +14,11 @@ class SecondScreen extends StatefulWidget {
 }
 
 class _SecondScreenState extends State<SecondScreen> {
-  final String bucketPath = "gs://brighthomes-d1947.firebasestorage.app";
   List<Reference> imageRefs = [];
   Map<String, Uint8List> imageData = {};
   String? selectedImage;
   String? selectedImageUrl;
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -32,6 +33,9 @@ class _SecondScreenState extends State<SecondScreen> {
 
       if (result.items.isEmpty) {
         debugPrint("No images found in secondFloor folder.");
+        setState(() {
+          isLoading = false;
+        });
         return;
       }
 
@@ -42,6 +46,9 @@ class _SecondScreenState extends State<SecondScreen> {
       await fetchImagesParallel();
     } catch (e) {
       debugPrint("Error fetching images: $e");
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -60,6 +67,9 @@ class _SecondScreenState extends State<SecondScreen> {
     }).toList();
 
     await Future.wait(futures);
+    setState(() {
+      isLoading = false;
+    });
   }
 
   Future<void> saveSelectedFacade() async {
@@ -101,25 +111,48 @@ class _SecondScreenState extends State<SecondScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        centerTitle: true,
+        automaticallyImplyLeading: false,
         title: Text(
           'Select a Double Storey Facade',
-          style: GoogleFonts.roboto(color: appColors.orangee, fontSize: 20),
+          style: GoogleFonts.roboto(
+              color: appColors.orangee,
+              fontSize: 20,
+              fontWeight: FontWeight.w500),
         ),
-        centerTitle: true,
         backgroundColor: Colors.white,
-        elevation: 0,
+        elevation: 2,
       ),
       body: Column(
         children: [
           Expanded(
-            child: imageRefs.isEmpty
-                ? const Center(child: CircularProgressIndicator())
+            child: isLoading
+                ? ListView.builder(
+                    padding: const EdgeInsets.all(10),
+                    itemCount: 5,
+                    itemBuilder: (context, index) {
+                      return Shimmer.fromColors(
+                        baseColor: Colors.grey[300]!,
+                        highlightColor: Colors.grey[100]!,
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(vertical: 8),
+                          height: 200,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white,
+                          ),
+                        ),
+                      );
+                    },
+                  )
                 : ListView.builder(
                     padding: const EdgeInsets.all(10),
                     itemCount: imageRefs.length,
                     itemBuilder: (context, index) {
                       String imagePath = imageRefs[index].fullPath;
                       bool isSelected = selectedImage == imagePath;
+                      String imageName =
+                          imagePath.split('/').last.split('.').first;
 
                       return GestureDetector(
                         onTap: () async {
@@ -165,7 +198,7 @@ class _SecondScreenState extends State<SecondScreen> {
                                   color: Colors.white,
                                 ),
                                 child: Text(
-                                  imagePath.split('/').last,
+                                  imageName,
                                   style: const TextStyle(
                                     color: Colors.black,
                                     fontSize: 14,

@@ -30,7 +30,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
             break;
 
           case 1:
-            nextScreen = const ProfileView();
+            nextScreen = ProfileView();
             break;
           default:
             return;

@@ -22,8 +22,14 @@ class _ProjectSelectionState extends State<ProjectSelection> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Select Project"),
-        backgroundColor: appColors.orangee,
+        title: const Text(
+          "Select Project",
+          style: TextStyle(
+              color: appColors.orangee,
+              fontWeight: FontWeight.w500,
+              fontSize: 18),
+        ),
+        backgroundColor: Colors.white,
         centerTitle: true,
       ),
       body: Padding(

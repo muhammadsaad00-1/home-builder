@@ -14,19 +14,23 @@ class FloorSelection extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Select Floor"),
-        backgroundColor: appColors.orangee,
+        title: Text(
+          "Select Storey Plan",
+          style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+              color: appColors.orangee),
+        ),
+        backgroundColor: Colors.white,
         centerTitle: true,
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _buildFloorButton(
-                context, "Single Storey", FirstScreen(), "first_floor"),
+            _buildFloorButton(context, "Single Storey", FirstScreen(), "1"),
             SizedBox(height: h * 0.02),
-            _buildFloorButton(
-                context, "Double Storey", SecondScreen(), "second_floor"),
+            _buildFloorButton(context, "Double Storey", SecondScreen(), "2"),
           ],
         ),
       ),
@@ -35,10 +39,10 @@ class FloorSelection extends StatelessWidget {
 
   /// **Builds a button for floor selection**
   Widget _buildFloorButton(BuildContext context, String floorName,
-      Widget floorScreen, String floorType) {
+      Widget floorScreen, String floorValue) {
     return ElevatedButton(
       onPressed: () async {
-        await _saveSelectedFloor(floorType);
+        await _saveSelectedFloor(floorValue);
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => floorScreen),
@@ -59,7 +63,7 @@ class FloorSelection extends StatelessWidget {
   }
 
   /// **Saves the selected floor in Firestore under the latest project**
-  Future<void> _saveSelectedFloor(String floorType) async {
+  Future<void> _saveSelectedFloor(String floorValue) async {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
@@ -81,12 +85,11 @@ class FloorSelection extends StatelessWidget {
         String projectId = projectSnapshot.docs.first.id;
 
         await userDoc.collection('projects').doc(projectId).update({
-          'selectedFloor': FieldValue.arrayUnion(
-              [floorType]), // Store floor type in an array
+          'selectedFloor': floorValue, // Store floor type as a single value
           'updatedAt': FieldValue.serverTimestamp(),
         });
 
-        debugPrint("Floor selection saved: $floorType");
+        debugPrint("Floor selection saved: $floorValue");
       } else {
         debugPrint("No projects found for user.");
       }

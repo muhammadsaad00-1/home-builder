@@ -1,4 +1,5 @@
 import 'package:bhc/view/auth/profile_creation.dart';
+import 'package:bhc/view/sitebuilder/sitebuilderhomepage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +12,6 @@ import '../../view_model/auth_view_model.dart';
 import 'package:bhc/view/admin/portal.dart';
 
 import '../admin/portal.dart';
-import 'forgetpassword.dart';
 
 class LoginViewAdmin extends StatelessWidget {
   LoginViewAdmin({super.key});
@@ -69,7 +69,7 @@ class LoginViewAdmin extends StatelessWidget {
                         prefixIcon: const Icon(Icons.email_outlined,
                             color: Colors.black54, size: 35),
                         border: InputBorder.none,
-                        hintText: "Admin@bhc.com",
+                        hintText: "SiteBuilder@bhc.com",
                         hintStyle: GoogleFonts.poppins(
                             color: Colors.black54, fontSize: 15),
                       ),
@@ -94,11 +94,7 @@ class LoginViewAdmin extends StatelessWidget {
                   ),
                   SizedBox(height: h * 0.01),
                   InkWell(
-                    splashColor: Colors.transparent,
-                    overlayColor: WidgetStatePropertyAll(Colors.transparent),
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=> ForgotPasswordView()));
-                    },
+                    onTap: () {},
                     child: const Align(
                       alignment: Alignment.topRight,
                       child: Text("Forgot password?",
@@ -132,7 +128,7 @@ class LoginViewAdmin extends StatelessWidget {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => PortalView()),
+                                  builder: (context) => SiteBuilderHome()),
                             );
                           }
                         }

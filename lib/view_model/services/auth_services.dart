@@ -1,83 +1,102 @@
 import 'dart:developer';
 import 'dart:io';
-
-import 'package:bhc/view/bhc1/choose_facade.dart';
+import 'package:bhc/view/bhc2/home.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
 import '../../utils/utils.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
   // Google Sign-in method
-  Future<UserCredential?> signInWithGoogle() async {
-    await InternetAddress.lookup('google.com');
-
+  Future<UserCredential?> signInWithGoogle(BuildContext context) async {
     try {
-      // Trigger the authentication flow
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      // Check internet connectivity
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isEmpty || result[0].rawAddress.isEmpty) {
+        Utils.snackBar("No Internet Connection", context);
+        return null;
+      }
 
-      // Obtain the auth details from the request
-      final GoogleSignInAuthentication? googleAuth =
-          await googleUser?.authentication;
+      // Trigger authentication flow
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
 
-      // Create a new credential
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth?.accessToken,
-        idToken: googleAuth?.idToken,
+      if (googleUser == null) {
+        Utils.snackBar("Google Sign-In canceled", context);
+        return null;
+      }
+
+      // Obtain auth details
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      // Create a credential
+      final OAuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
       );
-      UserCredential? googleCredential =
-          await FirebaseAuth.instance.signInWithCredential(credential);
 
-      // Once signed in, return the UserCredential
-      return googleCredential;
+      // Sign in with Firebase
+      UserCredential userCredential =
+          await _auth.signInWithCredential(credential);
+      final User? user = userCredential.user;
+
+      if (user != null) {
+        await _storeUserInFirestore(user);
+        return userCredential;
+      }
     } catch (e) {
-      log('Error in signup with google $e');
+      log('Google Sign-In Error: $e');
+      Utils.snackBar("Google Sign-In failed: $e", context);
+    }
+    return null;
+  }
 
-      return null;
+  // Store user credentials in Firestore
+  Future<void> _storeUserInFirestore(User user) async {
+    final userDoc = _firestore.collection('users').doc(user.uid);
+
+    final docSnapshot = await userDoc.get();
+    if (!docSnapshot.exists) {
+      await userDoc.set({
+        'uid': user.uid,
+        'name': user.displayName ?? "Unknown",
+        'email': user.email ?? "No email",
+        'profileImage': user.photoURL ?? "",
+        'createdAt': FieldValue.serverTimestamp(),
+      });
     }
   }
 
-  // creating google account
-  handleGoogleButtonClick(context) async {
+  // Handle Google Sign-In and Navigation
+  Future<void> handleGoogleButtonClick(BuildContext context) async {
+    final userCredential = await signInWithGoogle(context);
+    if (userCredential != null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomeView()),
+      );
+    } else {
+      log("Failed to create Account");
+      Utils.snackBar("Authentication failed. Please try again", context);
+    }
+  }
+
+  // Sign out method
+  Future<void> signOut(BuildContext context) async {
     try {
-      final userCredential = await signInWithGoogle();
-      if (userCredential != null) {
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const ChooseFacadeView()));
-      } else {
-        log("Failed to create Account");
-        Utils.snackBar("Authentication failed. Please try again", context);
-      }
+      await _googleSignIn.signOut();
+      await _auth.signOut();
+      Navigator.popUntil(context, (route) => route.isFirst);
     } catch (e) {
-      log("Error in signup with google: $e");
-      Utils.snackBar("An error occurred. Please try again", context);
+      log("Sign Out Error: $e");
+      Utils.snackBar("Error logging out", context);
     }
   }
 }
-  // Store user credentials in Firestore
-
-  // Sign out from Google
-  // Future<void> signOutGoogle(context) async {
-  //   await _googleSignIn.signOut();
-  //   await _auth.signOut();
-  //   await FirebaseAuth.instance.signOut();
-  // //  Navigator.pushNamed(context, routesName.login);
-  // }
-
-// signOut(context)async{
-//   Utils.flushBarErrorMessage("Logging Out...",context);
-//   try{
-//     await FirebaseAuth.instance.signOut();
-//     Navigator.popUntil(context, (route) => route.isFirst);
-//     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>loginView()));
-//     log("Logged out log");
-//   }
-//   catch(e){
-//     // VxToast.show(context, msg: e.toString());
-//   }
-// }

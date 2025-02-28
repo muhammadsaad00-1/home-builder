@@ -111,7 +111,10 @@ class _WindowsState extends State<Windows> {
         children: [
           Expanded(
             child: imageUrls.isEmpty
-                ? const Center(child: CircularProgressIndicator())
+                ? const Center(
+                    child: CircularProgressIndicator(
+                    color: appColors.orangee,
+                  ))
                 : ListView.builder(
                     padding: const EdgeInsets.all(10),
                     itemCount: imageUrls.length,
