@@ -1,7 +1,9 @@
+import 'package:bhc/view/auth/initialpage.dart';
 import 'package:bhc/view/sitebuilder/sitedetails.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../resources/components/appColors.dart';
 
 class SiteBuilderHome extends StatefulWidget {
@@ -48,6 +50,15 @@ class _SiteBuilderHomeState extends State<SiteBuilderHome> {
       filteredProjects = projects;
     });
   }
+  void _signOut() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', false);
+    await FirebaseAuth.instance.signOut();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const InitialPage()), // 🔹 Redirect to login screen
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +77,12 @@ class _SiteBuilderHomeState extends State<SiteBuilderHome> {
           padding: const EdgeInsets.only(left: 3),
           child: Image.asset('assets/images/logo.png'),
         ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.close, color: Colors.red), // 🔹 Logout Icon
+              onPressed: _signOut,
+            ),
+          ]
       ),
       body: filteredProjects.isEmpty
           ? const Center(child: Text('No projects assigned to you.'))

@@ -1,5 +1,6 @@
 import 'package:bhc/view/auth/profile_creation.dart';
 import 'package:bhc/view/sitebuilder/sitebuilderhomepage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -110,29 +111,53 @@ class LoginViewAdmin extends StatelessWidget {
                   Align(
                     alignment: Alignment.center,
                     child: InkWell(
-                      onTap: () async {
-                        final email = emailController.text.trim();
-                        final password = passController.text.trim();
+                        onTap: () async {
+                          final email = emailController.text.trim();
+                          final password = passController.text.trim();
 
-                        if (!email.contains("@bhc")) {
-                          Fluttertoast.showToast(
-                              msg: "This email belongs to a User",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM);
-                          return;
-                        }
-
-                        if (_formKey.currentState!.validate()) {
-                          await authViewModel.login(email, password, context);
-                          if (authViewModel.isLoggedIn) {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SiteBuilderHome()),
+                          if (!email.contains("@bhc")) {
+                            Fluttertoast.showToast(
+                                msg: "This email belongs to a User",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM
                             );
+                            return;
                           }
-                        }
-                      },
+
+                          if (_formKey.currentState!.validate()) {
+                            await authViewModel.login(email, password, context);
+
+                            if (authViewModel.isLoggedIn) {
+                              // Add the email to Firestore under "sitebuilders"
+                              try {
+                                final siteBuildersCollection = FirebaseFirestore.instance.collection("sitebuilders");
+
+                                // Check if the email already exists in the collection
+                                final existingDocs = await siteBuildersCollection.where("email", isEqualTo: email).get();
+
+                                if (existingDocs.docs.isEmpty) {
+                                  await siteBuildersCollection.add({
+                                    "email": email,
+                                    "addedAt": FieldValue.serverTimestamp(),
+                                  });
+                                }
+
+                                // Navigate to SiteBuilderHome
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => SiteBuilderHome()),
+                                );
+                              } catch (e) {
+                                Fluttertoast.showToast(
+                                    msg: "Error adding to sitebuilders: ${e.toString()}",
+                                    toastLength: Toast.LENGTH_LONG,
+                                    gravity: ToastGravity.BOTTOM
+                                );
+                              }
+                            }
+                          }
+                        },
+
                       child: Container(
                         height: 60,
                         width: w * 0.9,

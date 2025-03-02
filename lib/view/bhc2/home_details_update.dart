@@ -4,6 +4,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:photo_view/photo_view_gallery.dart';
+import 'package:photo_view/photo_view.dart';
 
 class HomeDetailUpdates extends StatefulWidget {
   final String projectId;
@@ -72,11 +74,25 @@ class _HomeDetailUpdatesState extends State<HomeDetailUpdates> {
     });
   }
 
+  void openFullScreenImage(int index) {
+    List<Uint8List> images = imageRefs.map((ref) => imageData[ref.fullPath]!).toList();
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FullScreenImageView(images: images, index: index),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black, size: 20),
+          onPressed: () => Navigator.pop(context),
+        ),
         automaticallyImplyLeading: false,
         title: Text(
           'Project Images - ${widget.projectName}',
@@ -118,50 +134,90 @@ class _HomeDetailUpdatesState extends State<HomeDetailUpdates> {
                 String imagePath = imageRefs[index].fullPath;
                 String imageName = imagePath.split('/').last.split('.').first;
 
-                return Container(
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.grey, width: 1),
-                  ),
-                  child: Column(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: imageData.containsKey(imagePath)
-                            ? Image.memory(
-                          imageData[imagePath]!,
-                          fit: BoxFit.cover,
-                        )
-                            : const SizedBox(
-                          height: 200,
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(8.0),
-                        decoration: BoxDecoration(
+                return GestureDetector(
+                  onTap: () => openFullScreenImage(index),
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.grey, width: 1),
+                    ),
+                    child: Column(
+                      children: [
+                        ClipRRect(
                           borderRadius: BorderRadius.circular(10),
-                          color: Colors.white,
-                        ),
-                        child: Text(
-                          imageName,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
+                          child: imageData.containsKey(imagePath)
+                              ? Image.memory(
+                            imageData[imagePath]!,
+                            fit: BoxFit.cover,
+                          )
+                              : const SizedBox(
+                            height: 200,
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
                           ),
-                          textAlign: TextAlign.center,
                         ),
-                      ),
-                    ],
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(8.0),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white,
+                          ),
+                          child: Text(
+                            imageName,
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class FullScreenImageView extends StatelessWidget {
+  final List<Uint8List> images;
+  final int index;
+
+  const FullScreenImageView({super.key, required this.images, required this.index});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          PhotoViewGallery.builder(
+            itemCount: images.length,
+            pageController: PageController(initialPage: index),
+            builder: (context, i) {
+              return PhotoViewGalleryPageOptions(
+                imageProvider: MemoryImage(images[i]),
+                minScale: PhotoViewComputedScale.contained,
+                maxScale: PhotoViewComputedScale.covered * 2,
+              );
+            },
+          ),
+          Positioned(
+            top: 40,
+            left: 20,
+            child: IconButton(
+              icon: const Icon(Icons.close, color: Colors.white, size: 30),
+              onPressed: () => Navigator.pop(context),
             ),
           ),
         ],

@@ -1,8 +1,8 @@
 import 'package:bhc/resources/components/appColors.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:io';
 
 class SiteDetails extends StatefulWidget {
   final String projectId;
@@ -13,13 +13,14 @@ class SiteDetails extends StatefulWidget {
     required this.projectId,
     required this.projectName,
   });
+
   @override
   _SiteDetailsState createState() => _SiteDetailsState();
 }
 
 class _SiteDetailsState extends State<SiteDetails> {
   final ImagePicker _picker = ImagePicker();
-  List<File?> images = List.filled(7, null);
+  List<String?> images = List.filled(7, null); // Store URLs instead of Files
   List<String> labels = ['Bathroom', 'Flooring', 'Kitchen', 'Lighting', 'Doors', 'Window', 'Facade'];
 
   @override
@@ -28,39 +29,44 @@ class _SiteDetailsState extends State<SiteDetails> {
     fetchExistingImages();
   }
 
+  // 📌 Pick image from gallery
   Future<void> pickImage(int index) async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       File imageFile = File(pickedFile.path);
-      setState(() {
-        images[index] = imageFile;
-      });
-      await uploadImage(imageFile, labels[index]);
+      await uploadImage(imageFile, labels[index], index);
     }
   }
 
-  Future<void> uploadImage(File imageFile, String label) async {
+  // 📌 Upload image to Firebase Storage
+  Future<void> uploadImage(File imageFile, String label, int index) async {
     try {
       Reference storageRef = FirebaseStorage.instance
           .ref()
           .child('projects/${widget.projectId}/$label.jpg');
+
       await storageRef.putFile(imageFile);
+      String downloadUrl = await storageRef.getDownloadURL();
+
+      setState(() {
+        images[index] = downloadUrl; // ✅ Store URL, not File
+      });
     } catch (e) {
       print("Error uploading image: $e");
     }
   }
 
+  // 📌 Fetch existing images from Firebase Storage
   Future<void> fetchExistingImages() async {
     try {
       ListResult result = await FirebaseStorage.instance.ref('projects/${widget.projectId}').listAll();
       if (result.items.isNotEmpty) {
-        print("Fetched existing images");
         for (var item in result.items) {
           String url = await item.getDownloadURL();
           int index = labels.indexOf(item.name.replaceAll('.jpg', ''));
           if (index != -1) {
             setState(() {
-              images[index] = File(url);
+              images[index] = url; // ✅ Store URL instead of File
             });
           }
         }
@@ -107,8 +113,8 @@ class _SiteDetailsState extends State<SiteDetails> {
                     child: images[index] != null
                         ? ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: Image.file(
-                        images[index]!,
+                      child: Image.network(
+                        images[index]!, // ✅ Load from Firebase URL
                         fit: BoxFit.cover,
                       ),
                     )
