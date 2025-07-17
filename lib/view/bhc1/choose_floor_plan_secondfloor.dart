@@ -132,7 +132,7 @@ class _ChooseFloorPlanSecondState extends State<ChooseFloorPlanSecond> {
               Text(
                 'Choose Your Floor Plan',
                 style: GoogleFonts.roboto(
-                  color: appColors.orangee,
+                  color: Colors.black87,
                   fontSize: 20,
                   fontWeight: FontWeight.w500,
                 ),
@@ -143,7 +143,7 @@ class _ChooseFloorPlanSecondState extends State<ChooseFloorPlanSecond> {
                 child: imageUrls.isEmpty
                     ? const Center(
                         child: CircularProgressIndicator(
-                        color: appColors.orangee,
+                        color: Colors.black87,
                       ))
                     : ListView.builder(
                         scrollDirection: Axis.horizontal,
@@ -161,7 +161,7 @@ class _ChooseFloorPlanSecondState extends State<ChooseFloorPlanSecond> {
                               decoration: BoxDecoration(
                                 border: Border.all(
                                   color: selectedIndex == index
-                                      ? Colors.orange
+                                      ? Colors.black87
                                       : Colors.transparent,
                                   width: selectedIndex == index ? 3 : 0,
                                 ),
@@ -212,7 +212,7 @@ class _ChooseFloorPlanSecondState extends State<ChooseFloorPlanSecond> {
                     width: w * 0.9,
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: appColors.orangee,
+                      color: Colors.black87,
                       borderRadius: BorderRadius.circular(15),
                     ),
                     child: const Center(

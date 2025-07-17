@@ -25,7 +25,7 @@ class _ProjectSelectionState extends State<ProjectSelection> {
         title: const Text(
           "Select Project",
           style: TextStyle(
-              color: appColors.orangee,
+              color: Colors.black87,
               fontWeight: FontWeight.w500,
               fontSize: 18),
         ),
@@ -53,7 +53,7 @@ class _ProjectSelectionState extends State<ProjectSelection> {
             ElevatedButton(
               onPressed: _isLoading ? null : _handleProjectCreation,
               style: ElevatedButton.styleFrom(
-                backgroundColor: appColors.orangee,
+                backgroundColor: Colors.black87,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                 shape: RoundedRectangleBorder(

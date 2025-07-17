@@ -25,9 +25,9 @@ class _LoginFatherState extends State<LoginFather> {
         children: [
           Image.asset(
             'assets/images/logo.png',
-            height: 200,
+            height: w*0.2,
           ),
-          SizedBox(height: h * 0.03),
+          SizedBox(height: h * 0.1),
           // Login as User
           Padding(
             padding: EdgeInsets.symmetric(horizontal: w * 0.1),
@@ -98,8 +98,8 @@ class _LoginFatherState extends State<LoginFather> {
             'Privacy policy',
             style: GoogleFonts.poppins(
               decoration: TextDecoration.underline,
-              decorationColor: appColors.orangee,
-              color: appColors.orangee,
+              decorationColor: Colors.black87,
+              color: Colors.black87,
               fontSize: 10,
             ),
           ),
@@ -109,8 +109,8 @@ class _LoginFatherState extends State<LoginFather> {
             'Terms of service',
             style: GoogleFonts.poppins(
               decoration: TextDecoration.underline,
-              decorationColor: appColors.orangee,
-              color: appColors.orangee,
+              decorationColor: Colors.black87,
+              color: Colors.black87,
               fontSize: 10,
             ),
           ),

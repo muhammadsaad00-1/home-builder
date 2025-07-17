@@ -19,7 +19,7 @@ class FloorSelection extends StatelessWidget {
           style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w500,
-              color: appColors.orangee),
+              color: Colors.black87),
         ),
         backgroundColor: Colors.white,
         centerTitle: true,
@@ -49,7 +49,7 @@ class FloorSelection extends StatelessWidget {
         );
       },
       style: ElevatedButton.styleFrom(
-        backgroundColor: appColors.orangee,
+        backgroundColor: Colors.black87,
         padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),

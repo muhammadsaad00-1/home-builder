@@ -99,7 +99,7 @@ class _ProfileViewState extends State<ProfileView> {
           child: isLoading
               ? const Center(
                   child: CircularProgressIndicator(
-                  color: appColors.orangee,
+                  color: Colors.black87,
                 ))
               : SingleChildScrollView(
                   child: Padding(
@@ -120,7 +120,7 @@ class _ProfileViewState extends State<ProfileView> {
                               },
                               child: const Icon(
                                 Icons.arrow_back_ios,
-                                color: appColors.orangee,
+                                color: Colors.black87,
                                 size: 20,
                               ),
                             ),
@@ -128,7 +128,7 @@ class _ProfileViewState extends State<ProfileView> {
                             Text(
                               'Profile',
                               style: GoogleFonts.roboto(
-                                color: appColors.orangee,
+                                color: Colors.black87,
                                 fontSize: 22,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -165,7 +165,7 @@ class _ProfileViewState extends State<ProfileView> {
                           alignment: Alignment.center,
                           child: DecoratedBox(
                             decoration: BoxDecoration(
-                              border: Border.all(color: appColors.orangee),
+                              border: Border.all(color: Colors.black87),
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(16),
                             ),
@@ -178,7 +178,7 @@ class _ProfileViewState extends State<ProfileView> {
                                   child: Text(
                                     "Update Profile",
                                     style: TextStyle(
-                                      color: appColors.orangee,
+                                      color: Colors.black87,
                                       fontWeight: FontWeight.w700,
                                       fontSize: 14,
                                     ),
@@ -199,7 +199,7 @@ class _ProfileViewState extends State<ProfileView> {
                               height: 55,
                               width: w * 0.9,
                               decoration: BoxDecoration(
-                                color: appColors.orangee,
+                                color: Colors.black87,
                                 borderRadius: BorderRadius.circular(16),
                               ),
                               child: const Center(

@@ -97,7 +97,7 @@ class _DoorsState extends State<Doors> {
         title: Text(
           'Select Door Type',
           style: GoogleFonts.roboto(
-              color: appColors.orangee,
+              color: Colors.black87,
               fontSize: 20,
               fontWeight: FontWeight.bold),
         ),
@@ -128,7 +128,7 @@ class _DoorsState extends State<Doors> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
-                              color: isSelected ? Colors.orange : Colors.grey,
+                              color: isSelected ? Colors.black87 : Colors.grey,
                               width: isSelected ? 3 : 1,
                             ),
                           ),
@@ -153,7 +153,7 @@ class _DoorsState extends State<Doors> {
                   Navigator.pop(context, selectedIndex);
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: appColors.orangee,
+                  backgroundColor: Colors.black87,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   shape: RoundedRectangleBorder(

@@ -115,7 +115,7 @@ class _CustomizeHomeViewState extends State<CustomizeHomeView> {
                 Text(
                   'Customize your home',
                   style: GoogleFonts.roboto(
-                    color: appColors.orangee,
+                    color: Colors.black87,
                     fontSize: 22,
                     fontWeight: FontWeight.w500,
                   ),
@@ -203,7 +203,7 @@ class _CustomizeHomeViewState extends State<CustomizeHomeView> {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: appColors.orangee,
+                    backgroundColor: Colors.black87,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),

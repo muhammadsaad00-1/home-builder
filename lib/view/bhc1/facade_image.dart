@@ -41,7 +41,7 @@ class FacadeImageView extends StatelessWidget {
                 height: 60,
                 width: w*0.9,
                 padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(color: appColors.orangee,borderRadius: BorderRadius.circular(15),border: Border.all(color: Colors.white,width: 1)),
+                decoration: BoxDecoration(color: Colors.black87,borderRadius: BorderRadius.circular(15),border: Border.all(color: Colors.white,width: 1)),
                 child: const Center(child: Text("Close ",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w700,fontSize: 14),)),),
             ),
           ),

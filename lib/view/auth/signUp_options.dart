@@ -29,9 +29,9 @@ class _SignupOptionsViewState extends State<SignupOptionsView> {
         children: [
           Image.asset(
             'assets/images/logo.png',
-            height: 200,
+            height: w*0.2,
           ),
-          SizedBox(height: h * 0.03),
+          SizedBox(height: h * 0.12),
 
           /// **Sign Up with Email**
           _buildSignUpOption(
@@ -98,8 +98,8 @@ class _SignupOptionsViewState extends State<SignupOptionsView> {
       text,
       style: GoogleFonts.poppins(
         decoration: TextDecoration.underline,
-        decorationColor: appColors.orangee,
-        color: appColors.orangee,
+        decorationColor: Colors.black87,
+        color:Colors.black87,
         fontSize: 10,
       ),
     );

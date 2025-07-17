@@ -23,17 +23,8 @@ class _ProfileCreationViewState extends State<ProfileCreationView> {
   TextEditingController emailController = TextEditingController();
   TextEditingController contactController = TextEditingController();
   TextEditingController passController = TextEditingController();
-  File? _image;
+  bool showPass = true;
 
-  Future<void> _pickImage() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,46 +36,21 @@ class _ProfileCreationViewState extends State<ProfileCreationView> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.only(left: 15),
+            padding:  EdgeInsets.symmetric(horizontal: w*0.06),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: h * 0.04),
+                SizedBox(height: h * 0.1),
                 Center(
-                  child: Stack(
-                    children: [
-                      CircleAvatar(
-                        backgroundImage: _image != null
-                            ? FileImage(_image!)
-                            : const AssetImage('assets/images/profile.jpg')
-                                as ImageProvider,
-                        radius: 85,
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: GestureDetector(
-                          onTap: _pickImage,
-                          child: CircleAvatar(
-                            backgroundColor: appColors.orangee,
-                            radius: 25,
-                            child: const Icon(
-                              Icons.camera_alt,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  child: Image.asset('assets/images/logo.png', height: w*0.2),
                 ),
-                SizedBox(height: h * 0.03),
+                SizedBox(height: h * 0.1),
                 _buildTextField(
-                    'Full name', nameController, Icons.perm_identity_sharp),
+                   false, 'Full name', nameController, Icons.perm_identity_sharp),
                 _buildTextField(
-                    'Email address', emailController, Icons.email_outlined),
-                _buildPasswordField(),
-                _buildTextField('Phone number', contactController, Icons.phone,
+                    false,'Email address', emailController, Icons.email_outlined),
+                _buildTextField(true, "Password", passController, Icons.import_contacts_sharp)     ,
+                _buildTextField(false,'Phone number', contactController, Icons.phone,
                     keyboardType: TextInputType.number),
                 SizedBox(height: h * 0.04),
                 Align(
@@ -105,7 +71,7 @@ class _ProfileCreationViewState extends State<ProfileCreationView> {
                       width: w * 0.9,
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                          color: appColors.orangee,
+                          color: Colors.black87,
                           borderRadius: BorderRadius.circular(12)),
                       child: const Center(
                           child: Text(
@@ -125,7 +91,7 @@ class _ProfileCreationViewState extends State<ProfileCreationView> {
                     const Expanded(child: Divider()),
                     const Text("Already have an account?",
                         style: TextStyle(
-                            color: appColors.orangee,
+                            color: Colors.black87,
                             fontSize: 15,
                             fontWeight: FontWeight.w400)),
                     const SizedBox(width: 4),
@@ -138,7 +104,7 @@ class _ProfileCreationViewState extends State<ProfileCreationView> {
                         },
                         child: const Text("Login",
                             style: TextStyle(
-                                color: appColors.orangee,
+                                color: Colors.black87,
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600))),
                     const Expanded(child: Divider()),
@@ -154,16 +120,18 @@ class _ProfileCreationViewState extends State<ProfileCreationView> {
   }
 
   Widget _buildTextField(
-      String label, TextEditingController controller, IconData icon,
+      bool isPassword,String label, TextEditingController controller, IconData icon,
       {TextInputType keyboardType = TextInputType.text}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label,
-            style: GoogleFonts.poppins(color: Colors.black54, fontSize: 12)),
-        const SizedBox(height: 10),
+            style: GoogleFonts.poppins(color: Colors.black, fontSize: 12)),
+        const SizedBox(height: 5),
+        if(!isPassword)
         Container(
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(35)),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.black54.withOpacity(0.5))),
           child: TextField(
             controller: controller,
             keyboardType: keyboardType,
@@ -171,16 +139,42 @@ class _ProfileCreationViewState extends State<ProfileCreationView> {
             decoration: InputDecoration(
               contentPadding:
                   const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              prefixIcon: Icon(icon, color: Colors.black54, size: 35),
               border: InputBorder.none,
               hintText: label,
               hintStyle:
-                  GoogleFonts.poppins(color: Colors.black54, fontSize: 15),
+                  GoogleFonts.poppins(color: Colors.grey.withOpacity(0.4), fontWeight: FontWeight.w300,fontSize: 15),
             ),
             style: GoogleFonts.poppins(fontSize: 12),
           ),
         ),
-        const SizedBox(height: 10),
+        if(isPassword)
+          Container(
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.black54.withOpacity(0.5))),
+            child: TextField(
+
+              controller: controller,
+              obscureText: showPass,
+              keyboardType: keyboardType,
+              cursorColor: Colors.black,
+              decoration: InputDecoration(
+                suffixIcon:  IconButton(onPressed: (){
+                  setState(() {
+                    showPass =!showPass;
+                  });
+                }, icon: showPass?Icon(Icons.remove_red_eye_outlined): Icon(Icons.remove_red_eye)),
+                contentPadding:
+                const EdgeInsets.symmetric(horizontal: 10, vertical:12),
+                border: InputBorder.none,
+                hintText: label,
+                hintStyle:
+                GoogleFonts.poppins(color: Colors.grey.withOpacity(0.4), fontWeight: FontWeight.w300,fontSize: 15),
+              ),
+              style: GoogleFonts.poppins(fontSize: 12),
+            ),
+          ),
+
+        const SizedBox(height: 15),
       ],
     );
   }
@@ -190,7 +184,7 @@ class _ProfileCreationViewState extends State<ProfileCreationView> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Password',
-            style: GoogleFonts.poppins(color: Colors.black54, fontSize: 12)),
+            style: GoogleFonts.poppins(color: Colors.black, fontSize: 12)),
         const SizedBox(height: 10),
         customTextFields.defaultTextField(
           validator: (val) => val!.isEmpty ? "Kindly enter password" : null,

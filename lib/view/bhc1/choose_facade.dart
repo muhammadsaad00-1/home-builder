@@ -28,7 +28,7 @@ class _ChooseFacadeViewState extends State<ChooseFacadeView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: h*0.03,),
-                Text('Choose Your Facade',style: GoogleFonts.roboto(color: appColors.orangee,fontSize: 20,fontWeight: FontWeight.w500),),
+                Text('Choose Your Facade',style: GoogleFonts.roboto(color: Colors.black87,fontSize: 20,fontWeight: FontWeight.w500),),
                 SizedBox(height: h*0.02,),
                 Expanded(
                   child: ListView.builder(
@@ -91,7 +91,7 @@ class _ChooseFacadeViewState extends State<ChooseFacadeView> {
                       height: 60,
                       width: w*0.9,
                       padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(color: appColors.orangee,borderRadius: BorderRadius.circular(15)),
+                      decoration: BoxDecoration(color: Colors.black87,borderRadius: BorderRadius.circular(15)),
                       child: const Center(child: Text("Next ",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w700,fontSize: 14),)),),
                   ),
                 ),

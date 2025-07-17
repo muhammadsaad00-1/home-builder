@@ -71,7 +71,7 @@ class _SiteBuilderHomeState extends State<SiteBuilderHome> {
         automaticallyImplyLeading: false,
         title: Text(
           'Home',
-          style: TextStyle(color: appColors.orangee),
+          style: TextStyle(color: Colors.black87),
         ),
         leading: Padding(
           padding: const EdgeInsets.only(left: 3),
@@ -105,7 +105,7 @@ class _SiteBuilderHomeState extends State<SiteBuilderHome> {
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: appColors.orangee,
+                backgroundColor: Colors.black87,
                 padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),

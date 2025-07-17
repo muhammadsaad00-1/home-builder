@@ -22,6 +22,7 @@ class _LoginViewUserState extends State<LoginViewUser> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool showpass = true;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +37,7 @@ class _LoginViewUserState extends State<LoginViewUser> {
           child: Container(
             height: h,
             width: w,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: EdgeInsets.symmetric(horizontal: w*0.06),
             child: Form(
               key: _formKey,
               child: Column(
@@ -46,53 +47,64 @@ class _LoginViewUserState extends State<LoginViewUser> {
                 children: [
                   SizedBox(height: h * 0.05),
                   Center(
-                    child: Image.asset('assets/images/logo.png', height: 200),
+                    child: Image.asset('assets/images/logo.png', height: w*0.2),
                   ),
-                  SizedBox(height: h * 0.01),
-                  Text('Login',
-                      style: GoogleFonts.roboto(
-                          color: appColors.greyy,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600)),
+                  SizedBox(height: h * 0.08),
                   SizedBox(height: h * 0.03),
                   Text('Email address',
                       style: GoogleFonts.poppins(
-                          color: Colors.black54, fontSize: 12)),
-                  SizedBox(height: h * 0.01),
+                          color: Colors.black, fontSize: 12)),
                   TextField(
                     keyboardType: TextInputType.emailAddress,
                     controller: emailController,
                     cursorColor: Colors.black,
                     decoration: InputDecoration(
+                      
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 10),
-                      prefixIcon: const Icon(Icons.email_outlined,
-                          color: Colors.black54, size: 35),
+
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(15),
                       ),
                       hintText: "User@gmail.com",
                       hintStyle: GoogleFonts.poppins(
-                          color: Colors.black54, fontSize: 15),
+                          color: Colors.grey.withOpacity(0.4), fontSize: 15),
                     ),
                     style: GoogleFonts.poppins(fontSize: 12),
                   ),
                   SizedBox(height: h * 0.02),
                   Text('Password',
                       style: GoogleFonts.poppins(
-                          color: Colors.black54, fontSize: 12)),
-                  SizedBox(height: h * 0.01),
-                  customTextFields.defaultTextField(
-                    validator: (val) {
-                      if (val == null || val.isEmpty) {
-                        return "Kindly enter password";
-                      }
-                      return null;
-                    },
-                    obs: true,
-                    hintText: "**********",
+                          color: Colors.black, fontSize: 12)),
+
+                  TextField(
+                    keyboardType: TextInputType.emailAddress,
                     controller: passController,
+                    cursorColor: Colors.black,
+                    decoration: InputDecoration(
+                      suffixIcon: IconButton(
+                          splashColor: Colors.transparent,
+                          hoverColor: Colors.transparent,
+                          onPressed: (){
+                        setState(() {
+                          showpass = !showpass;
+                        });
+                      }, icon: Icon(showpass?Icons.remove_red_eye_outlined:Icons.remove_red_eye)),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 10),
+
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      hintText: "********",
+                      hintStyle: GoogleFonts.poppins(
+                          color: Colors.grey.withOpacity(0.4), fontSize: 15),
+                    ),
+                    style: GoogleFonts.poppins(fontSize: 12),
+                    obscureText: showpass,
+
                   ),
+                  
                   SizedBox(height: h * 0.01),
                   InkWell(
                     splashColor: Colors.transparent,
@@ -110,8 +122,8 @@ class _LoginViewUserState extends State<LoginViewUser> {
                         "Forgot password?",
                         style: TextStyle(
                             decoration: TextDecoration.underline,
-                            decorationColor: appColors.orangee,
-                            color: appColors.orangee,
+                            decorationColor: Colors.black87,
+                            color: Colors.black87,
                             fontSize: 15,
                             fontWeight: FontWeight.w400),
                       ),
@@ -143,7 +155,7 @@ class _LoginViewUserState extends State<LoginViewUser> {
                         width: w * 0.9,
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: appColors.orangee,
+                          color: Colors.black87,
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: const Center(
@@ -165,7 +177,7 @@ class _LoginViewUserState extends State<LoginViewUser> {
                     children: [
                       const Text("Don't have an account?",
                           style: TextStyle(
-                              color: appColors.orangee,
+                              color: Colors.black87,
                               fontSize: 15,
                               fontWeight: FontWeight.w400)),
                       const SizedBox(width: 4),
@@ -180,7 +192,7 @@ class _LoginViewUserState extends State<LoginViewUser> {
                         },
                         child: const Text("Sign up",
                             style: TextStyle(
-                                color: appColors.orangee,
+                                color: Colors.black87,
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600)),
                       ),
@@ -192,8 +204,8 @@ class _LoginViewUserState extends State<LoginViewUser> {
                     child: Text('Privacy policy',
                         style: GoogleFonts.poppins(
                             decoration: TextDecoration.underline,
-                            decorationColor: appColors.orangee,
-                            color: appColors.orangee,
+                            decorationColor: Colors.black87,
+                            color: Colors.black87,
                             fontSize: 10)),
                   ),
                   SizedBox(height: h * 0.01),
@@ -202,8 +214,8 @@ class _LoginViewUserState extends State<LoginViewUser> {
                     child: Text('Terms of service',
                         style: GoogleFonts.poppins(
                             decoration: TextDecoration.underline,
-                            decorationColor: appColors.orangee,
-                            color: appColors.orangee,
+                            decorationColor: Colors.black87,
+                            color: Colors.black87,
                             fontSize: 10)),
                   ),
                 ],

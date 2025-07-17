@@ -51,11 +51,10 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: h * 0.05),
                   Center(
-                    child: Image.asset('assets/images/logo.png', height: 200),
+                    child: Image.asset('assets/images/logo.png', height: w*0.2),
                   ),
-                  SizedBox(height: h * 0.01),
+                  SizedBox(height: h * 0.15),
                   Text('Forgot Password',
                       style: GoogleFonts.roboto(
                           color: appColors.greyy,
@@ -64,7 +63,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                   SizedBox(height: h * 0.03),
                   Text('Enter your email address',
                       style: GoogleFonts.poppins(
-                          color: Colors.black54, fontSize: 12)),
+                          color: Colors.black, fontSize: 12)),
                   SizedBox(height: h * 0.01),
                   TextField(
                     keyboardType: TextInputType.emailAddress,
@@ -73,10 +72,9 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 10),
-                      prefixIcon: const Icon(Icons.email_outlined,
-                          color: Colors.black54, size: 35),
+
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(20),
                       ),
                       hintText: "User@gmail.com",
                       hintStyle: GoogleFonts.poppins(
@@ -94,7 +92,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                         width: w * 0.9,
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: appColors.orangee,
+                          color: Colors.black87,
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: const Center(
@@ -117,7 +115,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                       onPressed: () => Navigator.pop(context),
                       child: Text("Back to Login",
                           style: GoogleFonts.poppins(
-                              color: appColors.orangee,
+                              color: Colors.black87,
                               fontSize: 14,
                               fontWeight: FontWeight.w600)),
                     ),

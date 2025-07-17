@@ -116,7 +116,7 @@ class _SecondScreenState extends State<SecondScreen> {
         title: Text(
           'Select a Double Storey Facade',
           style: GoogleFonts.roboto(
-              color: appColors.orangee,
+              color: Colors.black87,
               fontSize: 20,
               fontWeight: FontWeight.w500),
         ),
@@ -170,7 +170,7 @@ class _SecondScreenState extends State<SecondScreen> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
-                              color: isSelected ? Colors.orange : Colors.grey,
+                              color: isSelected ? Colors.black87 : Colors.grey,
                               width: isSelected ? 3 : 1,
                             ),
                           ),
@@ -227,7 +227,7 @@ class _SecondScreenState extends State<SecondScreen> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: appColors.orangee,
+                  backgroundColor: Colors.black87,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   shape: RoundedRectangleBorder(

@@ -14,11 +14,19 @@ import 'package:bhc/view/admin/portal.dart';
 
 import '../admin/portal.dart';
 
-class LoginViewAdmin extends StatelessWidget {
+class LoginViewAdmin extends StatefulWidget {
   LoginViewAdmin({super.key});
 
+  @override
+  State<LoginViewAdmin> createState() => _LoginViewAdminState();
+}
+
+class _LoginViewAdminState extends State<LoginViewAdmin> {
+  bool showpass = true;
   TextEditingController emailController = TextEditingController();
+
   TextEditingController passController = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -33,7 +41,7 @@ class LoginViewAdmin extends StatelessWidget {
           child: Container(
             height: h,
             width: w,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding:  EdgeInsets.symmetric(horizontal: w*0.06, vertical: 12),
             child: Form(
               key: _formKey,
               child: Column(
@@ -44,54 +52,62 @@ class LoginViewAdmin extends StatelessWidget {
                   SizedBox(height: h * 0.05),
                   Center(
                       child:
-                          Image.asset('assets/images/logo.png', height: 200)),
-                  SizedBox(height: h * 0.01),
-                  Text('Login',
-                      style: GoogleFonts.roboto(
-                          color: appColors.greyy,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600)),
+                          Image.asset('assets/images/logo.png', height: w*0.2)),
+                  SizedBox(height: h * 0.08),
+
                   SizedBox(height: h * 0.03),
                   Text('Email address',
                       style: GoogleFonts.poppins(
-                          color: Colors.black54, fontSize: 12)),
-                  SizedBox(height: h * 0.01),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(35),
-                    ),
-                    child: TextField(
-                      keyboardType: TextInputType.emailAddress,
-                      controller: emailController,
-                      cursorColor: Colors.black,
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 10),
-                        prefixIcon: const Icon(Icons.email_outlined,
-                            color: Colors.black54, size: 35),
-                        border: InputBorder.none,
-                        hintText: "SiteBuilder@bhc.com",
-                        hintStyle: GoogleFonts.poppins(
-                            color: Colors.black54, fontSize: 15),
+                          color: Colors.black, fontSize: 12)),
+                  TextField(
+                    keyboardType: TextInputType.emailAddress,
+                    controller: emailController,
+                    cursorColor: Colors.black,
+                    decoration: InputDecoration(
+
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 10),
+
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
                       ),
-                      style: GoogleFonts.poppins(fontSize: 12),
+                      hintText: "SiteBuilder@bhc.com",
+                      hintStyle: GoogleFonts.poppins(
+                          color: Colors.grey.withOpacity(0.4), fontSize: 15),
                     ),
+                    style: GoogleFonts.poppins(fontSize: 12),
                   ),
                   SizedBox(height: h * 0.02),
                   Text('Password',
                       style: GoogleFonts.poppins(
-                          color: Colors.black54, fontSize: 12)),
-                  SizedBox(height: h * 0.01),
-                  customTextFields.defaultTextField(
-                    validator: (val) {
-                      if (val == null || val.isEmpty) {
-                        return "Kindly enter password";
-                      }
-                      return null;
-                    },
-                    obs: true,
-                    hintText: "**********",
+                          color: Colors.black, fontSize: 12)),
+
+                  TextField(
+                    keyboardType: TextInputType.emailAddress,
                     controller: passController,
+                    cursorColor: Colors.black,
+                    decoration: InputDecoration(
+                      suffixIcon: IconButton(
+                          splashColor: Colors.transparent,
+                          hoverColor: Colors.transparent,
+                          onPressed: (){
+                            setState(() {
+                              showpass = !showpass;
+                            });
+                          }, icon: Icon(showpass?Icons.remove_red_eye_outlined:Icons.remove_red_eye)),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 10),
+
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      hintText: "********",
+                      hintStyle: GoogleFonts.poppins(
+                          color: Colors.grey.withOpacity(0.4), fontSize: 15),
+                    ),
+                    style: GoogleFonts.poppins(fontSize: 12),
+                    obscureText: showpass,
+
                   ),
                   SizedBox(height: h * 0.01),
                   InkWell(
@@ -101,8 +117,8 @@ class LoginViewAdmin extends StatelessWidget {
                       child: Text("Forgot password?",
                           style: TextStyle(
                               decoration: TextDecoration.underline,
-                              decorationColor: appColors.orangee,
-                              color: appColors.orangee,
+                              decorationColor:Colors.black87,
+                              color: Colors.black87,
                               fontSize: 15,
                               fontWeight: FontWeight.w400)),
                     ),
@@ -163,7 +179,7 @@ class LoginViewAdmin extends StatelessWidget {
                         width: w * 0.9,
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: appColors.orangee,
+                          color: Colors.black87,
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: const Center(
@@ -185,7 +201,7 @@ class LoginViewAdmin extends StatelessWidget {
                       const Expanded(child: Divider()),
                       const Text("Don't have an account?",
                           style: TextStyle(
-                              color: appColors.orangee,
+                              color: Colors.black87,
                               fontSize: 15,
                               fontWeight: FontWeight.w400)),
                       const SizedBox(width: 4),
@@ -199,7 +215,7 @@ class LoginViewAdmin extends StatelessWidget {
                         },
                         child: const Text("Sign up",
                             style: TextStyle(
-                                color: appColors.orangee,
+                                color: Colors.black87,
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600)),
                       ),
@@ -212,8 +228,8 @@ class LoginViewAdmin extends StatelessWidget {
                     child: Text('Privacy policy',
                         style: GoogleFonts.poppins(
                             decoration: TextDecoration.underline,
-                            decorationColor: appColors.orangee,
-                            color: appColors.orangee,
+                            decorationColor: Colors.black87,
+                            color: Colors.black87,
                             fontSize: 10)),
                   ),
                   SizedBox(height: h * 0.01),
@@ -222,8 +238,8 @@ class LoginViewAdmin extends StatelessWidget {
                     child: Text('Terms of service',
                         style: GoogleFonts.poppins(
                             decoration: TextDecoration.underline,
-                            decorationColor: appColors.orangee,
-                            color: appColors.orangee,
+                            decorationColor: Colors.black87,
+                            color:Colors.black87,
                             fontSize: 10)),
                   ),
                 ],

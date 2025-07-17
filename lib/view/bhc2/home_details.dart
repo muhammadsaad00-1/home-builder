@@ -139,7 +139,7 @@ class _HomeDetailsViewState extends State<HomeDetailsView> {
         backgroundColor: Colors.white,
         title: Text('Home Details',
             style: GoogleFonts.roboto(
-              color: appColors.orangee,
+              color: Colors.black87,
               fontSize: 22,
               fontWeight: FontWeight.w500,
             )),

@@ -87,10 +87,10 @@ class _HomeViewState extends State<HomeView> {
           automaticallyImplyLeading: false,
           title: Text(
             'Home',
-            style: TextStyle(color: appColors.orangee),
+            style: TextStyle(color: Colors.black87),
           ),
           leading: Padding(
-            padding: const EdgeInsets.only(left: 3),
+            padding:  EdgeInsets.only(left:w*0.01 ),
             child: Image.asset('assets/images/logo.png'),
           ),
         ),
@@ -103,7 +103,7 @@ class _HomeViewState extends State<HomeView> {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => ProjectSelection()));
           },
-          backgroundColor: appColors.orangee,
+          backgroundColor: Colors.black87,
           child: const Icon(Icons.add, color: Colors.white, size: 30),
         ),
         body: SafeArea(
@@ -202,7 +202,7 @@ class _HomeViewState extends State<HomeView> {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withOpacity(0.4),
               blurRadius: 8,
               spreadRadius: 2,
               offset: const Offset(2, 4),

@@ -4,7 +4,6 @@ import 'package:bhc/view/auth/signUp_options.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../../resources/components/appColors.dart';
 import '../../view_model/services/auth_services.dart';
 import 'loginviewuser.dart';
@@ -37,9 +36,9 @@ class _InitialPageState extends State<InitialPage> {
             children: [
               Image.asset(
                 'assets/images/logo.png',
-                height: 200,
+                height: w*0.2,
               ),
-              SizedBox(height: h * 0.05),
+              SizedBox(height: h * 0.1),
               // Sign Up Button
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: w * 0.1),
@@ -55,7 +54,7 @@ class _InitialPageState extends State<InitialPage> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: appColors.orangee,
+                      color: Colors.black87,
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: const Center(
@@ -86,7 +85,7 @@ class _InitialPageState extends State<InitialPage> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: appColors.orangee,
+                      color: Colors.black87,
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: const Center(
@@ -108,8 +107,8 @@ class _InitialPageState extends State<InitialPage> {
                 'Privacy policy',
                 style: GoogleFonts.poppins(
                   decoration: TextDecoration.underline,
-                  decorationColor: appColors.orangee,
-                  color: appColors.orangee,
+                  decorationColor: Colors.black87,
+                  color: Colors.black87,
                   fontSize: 10,
                 ),
               ),
@@ -119,8 +118,8 @@ class _InitialPageState extends State<InitialPage> {
                 'Terms of service',
                 style: GoogleFonts.poppins(
                   decoration: TextDecoration.underline,
-                  decorationColor: appColors.orangee,
-                  color: appColors.orangee,
+                  decorationColor: Colors.black87,
+                  color:Colors.black87,
                   fontSize: 10,
                 ),
               ),

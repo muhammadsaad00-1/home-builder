@@ -33,14 +33,14 @@ class _NotificationsViewState extends State<NotificationsView> {
                     },
                     child: const Icon(
                       Icons.arrow_back_ios,
-                      color: appColors.orangee,
+                      color: Colors.black87,
                     ),
                   ),
                   SizedBox(width: w * 0.2),
                   Text(
                     'Notifications',
                     style: GoogleFonts.roboto(
-                        color: appColors.orangee,
+                        color: Colors.black87,
                         fontSize: 20,
                         fontWeight: FontWeight.w500),
                   ),
@@ -59,7 +59,7 @@ class _NotificationsViewState extends State<NotificationsView> {
                             SizedBox(height: h * 0.03),
                             const Icon(
                               Icons.notifications_active,
-                              color: appColors.orangee,
+                              color: Colors.black87,
                               size: 35,
                             ),
                             SizedBox(width: w * 0.03),
