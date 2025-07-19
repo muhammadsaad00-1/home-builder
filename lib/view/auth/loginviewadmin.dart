@@ -5,14 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
-import '../../resources/components/appColors.dart';
-import '../../resources/components/customTextField.dart';
-import '../../utils/utils.dart';
 import '../../view_model/auth_view_model.dart';
-import 'package:bhc/view/admin/portal.dart';
-
-import '../admin/portal.dart';
 
 class LoginViewAdmin extends StatefulWidget {
   LoginViewAdmin({super.key});
@@ -71,7 +64,7 @@ class _LoginViewAdminState extends State<LoginViewAdmin> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
-                      hintText: "SiteBuilder@bhc.com",
+                      hintText: "SiteBuilder@asr.com",
                       hintStyle: GoogleFonts.poppins(
                           color: Colors.grey.withOpacity(0.4), fontSize: 15),
                     ),
@@ -144,7 +137,6 @@ class _LoginViewAdminState extends State<LoginViewAdmin> {
                             await authViewModel.login(email, password, context);
 
                             if (authViewModel.isLoggedIn) {
-                              // Add the email to Firestore under "sitebuilders"
                               try {
                                 final siteBuildersCollection = FirebaseFirestore.instance.collection("sitebuilders");
 
@@ -162,6 +154,18 @@ class _LoginViewAdminState extends State<LoginViewAdmin> {
                                 Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(builder: (context) => SiteBuilderHome()),
+                                );
+                                Fluttertoast.showToast(
+                                  msg: "Login successful",
+                                  toastLength: Toast.LENGTH_LONG,
+                                  gravity: ToastGravity.BOTTOM,
+                                  backgroundColor: Colors.grey.shade800,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0,
+                                  timeInSecForIosWeb: 2,
+                                  webPosition: "center",
+                                  webBgColor: "linear-gradient(to right, #616161, #757575)",
+
                                 );
                               } catch (e) {
                                 Fluttertoast.showToast(

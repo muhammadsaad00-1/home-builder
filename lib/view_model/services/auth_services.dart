@@ -20,7 +20,6 @@ class AuthService {
       // Check internet connectivity
       final result = await InternetAddress.lookup('google.com');
       if (result.isEmpty || result[0].rawAddress.isEmpty) {
-        Utils.snackBar("No Internet Connection", context);
         return null;
       }
 
@@ -28,7 +27,6 @@ class AuthService {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
 
       if (googleUser == null) {
-        Utils.snackBar("Google Sign-In canceled", context);
         return null;
       }
 
@@ -53,7 +51,6 @@ class AuthService {
       }
     } catch (e) {
       log('Google Sign-In Error: $e');
-      Utils.snackBar("Google Sign-In failed: $e", context);
     }
     return null;
   }
@@ -84,7 +81,6 @@ class AuthService {
       );
     } else {
       log("Failed to create Account");
-      Utils.snackBar("Authentication failed. Please try again", context);
     }
   }
 
@@ -96,7 +92,6 @@ class AuthService {
       Navigator.popUntil(context, (route) => route.isFirst);
     } catch (e) {
       log("Sign Out Error: $e");
-      Utils.snackBar("Error logging out", context);
     }
   }
 }

@@ -3,6 +3,7 @@ import 'package:bhc/view/sitebuilder/sitebuilderhomepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../repo/authRepo.dart';
@@ -39,7 +40,6 @@ class AuthViewModel with ChangeNotifier {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
       if (googleUser == null) {
-        Utils.snackBar('Google Sign-In canceled', context);
         return null;
       }
 
@@ -75,16 +75,25 @@ class AuthViewModel with ChangeNotifier {
           });
         }
 
-        // Navigate to Home after successful login
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => const HomeView()));
+        Fluttertoast.showToast(
+          msg: "Login successful",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.grey.shade800,
+          textColor: Colors.white,
+          fontSize: 16.0,
+          timeInSecForIosWeb: 2,
+          webPosition: "center",
+          webBgColor: "linear-gradient(to right, #616161, #757575)",
+
+        );
 
         return userCredential;
       }
     } catch (e) {
-      print("Google Sign-In Error: $e");
-      Utils.snackBar('Google Sign-In failed: ${e.toString()}', context);
-    }
+      print("Google Sign-In Error: $e");}
     return null;
   }
 
@@ -94,7 +103,18 @@ class AuthViewModel with ChangeNotifier {
   Future<void> signup(String email, String password, String name,
       String contact, BuildContext context) async {
     if (email.isEmpty || password.isEmpty || name.isEmpty || contact.isEmpty) {
-      Utils.snackBar('Please fill in all fields', context);
+      Fluttertoast.showToast(
+        msg: "Please enter all the fields",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.grey.shade800,
+        textColor: Colors.white,
+        fontSize: 16.0,
+        timeInSecForIosWeb: 2,
+        webPosition: "center",
+        webBgColor: "linear-gradient(to right, #616161, #757575)",
+
+      );
       return;
     }
 
@@ -111,10 +131,22 @@ class AuthViewModel with ChangeNotifier {
 
         notifyListeners();
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => const HomeView()));
+            context, MaterialPageRoute(builder: (context) =>  HomeView()));
+        Fluttertoast.showToast(
+          msg: "Signup successful",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.grey.shade800,
+          textColor: Colors.white,
+          fontSize: 16.0,
+          timeInSecForIosWeb: 2,
+          webPosition: "center",
+          webBgColor: "linear-gradient(to right, #616161, #757575)",
+
+        );
       }
     } catch (e) {
-      Utils.snackBar('Signup failed: ${e.toString()}', context);
+
     }
   }
 
@@ -144,8 +176,18 @@ class AuthViewModel with ChangeNotifier {
   Future<void> login(
       String email, String password, BuildContext context) async {
     if (email.isEmpty || password.isEmpty) {
-      Utils.snackBar('Please fill in all fields', context);
-      return;
+      Fluttertoast.showToast(
+        msg: "Kindly fill all fields",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.grey.shade800,
+        textColor: Colors.white,
+        fontSize: 16.0,
+        timeInSecForIosWeb: 2,
+        webPosition: "center",
+        webBgColor: "linear-gradient(to right, #616161, #757575)",
+
+      );      return;
     }
 
     try {
@@ -169,23 +211,66 @@ class AuthViewModel with ChangeNotifier {
           Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => email.contains('@bhc')
+                builder: (context) => email.contains('@asr')
                     ? const SiteBuilderHome()
                     : const HomeView(),
               ));
-          Utils.snackBar('Logged in successfully', context);
-        });
+               });
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        Utils.snackBar('No user found for that email.', context);
+        Fluttertoast.showToast(
+          msg: "User not found",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.grey.shade800,
+          textColor: Colors.white,
+          fontSize: 16.0,
+          timeInSecForIosWeb: 2,
+          webPosition: "center",
+          webBgColor: "linear-gradient(to right, #616161, #757575)",
+
+        );
       } else if (e.code == 'wrong-password') {
-        Utils.snackBar('Wrong password provided.', context);
+        Fluttertoast.showToast(
+          msg: "Wrong Password",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.grey.shade800,
+          textColor: Colors.white,
+          fontSize: 16.0,
+          timeInSecForIosWeb: 2,
+          webPosition: "center",
+          webBgColor: "linear-gradient(to right, #616161, #757575)",
+
+        );
       } else {
-        Utils.snackBar(e.message ?? 'An error occurred', context);
+        Fluttertoast.showToast(
+          msg: "Invalid Credentials",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.grey.shade800,
+          textColor: Colors.white,
+          fontSize: 16.0,
+          timeInSecForIosWeb: 2,
+          webPosition: "center",
+          webBgColor: "linear-gradient(to right, #616161, #757575)",
+
+        );
       }
     } catch (e) {
-      Utils.snackBar('An error occurred. Please try again.', context);
+      Fluttertoast.showToast(
+        msg: e.toString(),
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.grey.shade800,
+        textColor: Colors.white,
+        fontSize: 16.0,
+        timeInSecForIosWeb: 2,
+        webPosition: "center",
+        webBgColor: "linear-gradient(to right, #616161, #757575)",
+
+      );
     }
   }
 
@@ -199,7 +284,6 @@ class AuthViewModel with ChangeNotifier {
       notifyListeners();
       Navigator.pushReplacementNamed(context, '/initial');
     } catch (e) {
-      Utils.snackBar('Logout failed: ${e.toString()}', context);
     }
   }
 

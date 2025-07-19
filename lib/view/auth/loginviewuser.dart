@@ -137,7 +137,7 @@ class _LoginViewUserState extends State<LoginViewUser> {
                         final email = emailController.text.trim();
                         final password = passController.text.trim();
 
-                        if (email.contains("@bhc")) {
+                        if (email.contains("@asr")) {
                           Fluttertoast.showToast(
                             msg: "This email belongs to an Admin",
                             toastLength: Toast.LENGTH_SHORT,

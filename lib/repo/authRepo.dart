@@ -1,4 +1,3 @@
-import 'package:bhc/view/bhc2/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +37,6 @@ class AuthRepository {
 
       return userCredential; // Ensure this is returned
     } catch (e) {
-      Utils.snackBar('Signup failed: ${e.toString()}', context);
       rethrow; // Ensure the error propagates properly
     }
   }
