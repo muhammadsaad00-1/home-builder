@@ -113,14 +113,13 @@ class AuthViewModel with ChangeNotifier {
         timeInSecForIosWeb: 2,
         webPosition: "center",
         webBgColor: "linear-gradient(to right, #616161, #757575)",
-
       );
       return;
     }
 
     try {
       UserCredential userCredential =
-          await repo.signUp(email, password, name, context);
+      await repo.signUp(email, password, name, context);
 
       if (userCredential.user != null) {
         _user = userCredential.user;
@@ -131,7 +130,9 @@ class AuthViewModel with ChangeNotifier {
 
         notifyListeners();
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) =>  HomeView()));
+          context,
+          MaterialPageRoute(builder: (context) => HomeView()),
+        );
         Fluttertoast.showToast(
           msg: "Signup successful",
           toastLength: Toast.LENGTH_LONG,
@@ -142,13 +143,49 @@ class AuthViewModel with ChangeNotifier {
           timeInSecForIosWeb: 2,
           webPosition: "center",
           webBgColor: "linear-gradient(to right, #616161, #757575)",
-
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        Fluttertoast.showToast(
+          msg: "User already exists with this email",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red.shade700,
+          textColor: Colors.white,
+          fontSize: 16.0,
+          timeInSecForIosWeb: 2,
+          webPosition: "center",
+          webBgColor: "linear-gradient(to right, #b71c1c, #c62828)",
+        );
+      } else {
+        Fluttertoast.showToast(
+          msg: "Signup failed: ${e.message}",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red.shade700,
+          textColor: Colors.white,
+          fontSize: 16.0,
+          timeInSecForIosWeb: 2,
+          webPosition: "center",
+          webBgColor: "linear-gradient(to right, #b71c1c, #c62828)",
         );
       }
     } catch (e) {
-
+      Fluttertoast.showToast(
+        msg: "Unexpected error occurred.",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red.shade700,
+        textColor: Colors.white,
+        fontSize: 16.0,
+        timeInSecForIosWeb: 2,
+        webPosition: "center",
+        webBgColor: "linear-gradient(to right, #b71c1c, #c62828)",
+      );
     }
   }
+
 
   /// **Create User Document in Firestore**
   Future<void> _createUserInFirestore(

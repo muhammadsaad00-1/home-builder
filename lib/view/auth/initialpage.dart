@@ -1,6 +1,8 @@
 import 'package:bhc/view/auth/loginfather.dart';
+import 'package:bhc/view/auth/privacy.dart';
 import 'package:bhc/view/auth/profile_creation.dart';
 import 'package:bhc/view/auth/signUp_options.dart';
+import 'package:bhc/view/auth/termsandconditions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -103,24 +105,35 @@ class _InitialPageState extends State<InitialPage> {
               ),
               SizedBox(height: h * 0.15),
               // Privacy Policy
-              Text(
-                'Privacy policy',
-                style: GoogleFonts.poppins(
-                  decoration: TextDecoration.underline,
-                  decorationColor: Colors.black87,
-                  color: Colors.black87,
-                  fontSize: 10,
+              GestureDetector(
+                onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=> PrivacyPolicyScreen()));
+                },
+                child: Text(
+                  'Privacy policy',
+                  style: GoogleFonts.poppins(
+                    decoration: TextDecoration.underline,
+                    decorationColor: Colors.black87,
+                    color: Colors.black87,
+                    fontSize: 10,
+                  ),
                 ),
               ),
               SizedBox(height: h * 0.01),
               // Terms of Service
-              Text(
-                'Terms of service',
-                style: GoogleFonts.poppins(
-                  decoration: TextDecoration.underline,
-                  decorationColor: Colors.black87,
-                  color:Colors.black87,
-                  fontSize: 10,
+              GestureDetector(
+
+                onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=> TermsConditionsScreen()));
+                },
+                child: Text(
+                  'Terms of service',
+                  style: GoogleFonts.poppins(
+                    decoration: TextDecoration.underline,
+                    decorationColor: Colors.black87,
+                    color:Colors.black87,
+                    fontSize: 10,
+                  ),
                 ),
               ),
             ],

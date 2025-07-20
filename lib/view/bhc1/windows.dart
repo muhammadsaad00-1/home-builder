@@ -96,6 +96,8 @@ class _WindowsState extends State<Windows> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        leading: IconButton(onPressed: (){Navigator.pop(context);}, icon: Icon(Icons.arrow_back_ios_new,color: Colors.black,)),
+
         title: Text(
           'Select Windows Design',
           style: GoogleFonts.roboto(

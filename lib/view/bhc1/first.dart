@@ -119,6 +119,8 @@ class _FirstScreenState extends State<FirstScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        leading: IconButton(onPressed: (){Navigator.pop(context);}, icon: Icon(Icons.arrow_back_ios_new,color: Colors.black,)),
+
         automaticallyImplyLeading: false,
         title: Text(
           'Select a Single Storey Facade',

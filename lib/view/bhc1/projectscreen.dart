@@ -22,6 +22,8 @@ class _ProjectSelectionState extends State<ProjectSelection> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(onPressed: (){Navigator.pop(context);}, icon: Icon(Icons.arrow_back_ios_new,color: Colors.black,)),
+
         title: const Text(
           "Select Project",
           style: TextStyle(

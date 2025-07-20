@@ -119,6 +119,8 @@ class _SecondScreenState extends State<SecondScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        leading: IconButton(onPressed: (){Navigator.pop(context);}, icon: Icon(Icons.arrow_back_ios_new,color: Colors.black,)),
+
         centerTitle: true,
         automaticallyImplyLeading: false,
         title: Text(

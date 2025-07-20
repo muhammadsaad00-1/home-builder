@@ -94,6 +94,8 @@ class _DoorsState extends State<Doors> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        leading: IconButton(onPressed: (){Navigator.pop(context);}, icon: Icon(Icons.arrow_back_ios_new,color: Colors.black,)),
+
         title: Text(
           'Select Door Type',
           style: GoogleFonts.roboto(

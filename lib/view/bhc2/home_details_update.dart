@@ -31,7 +31,7 @@ class _HomeDetailUpdatesState extends State<HomeDetailUpdates> {
   Future<void> fetchMediaFiles() async {
     try {
       final storageRef =
-          FirebaseStorage.instance.ref("projects/${widget.projectId}");
+      FirebaseStorage.instance.ref("projects/${widget.projectId}");
       final ListResult result = await storageRef.listAll();
 
       if (result.items.isEmpty) {
@@ -98,37 +98,70 @@ class _HomeDetailUpdatesState extends State<HomeDetailUpdates> {
       ),
       body: isLoading
           ? Center(
-              child: Shimmer.fromColors(
-                baseColor: Colors.grey[300]!,
-                highlightColor: Colors.grey[100]!,
-                child: Container(
-                  width: 200,
-                  height: 200,
-                  color: Colors.white,
-                ),
-              ),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.all(10),
-              itemCount: mediaFiles.length,
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () => openFullScreenMedia(index),
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 8),
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Colors.grey, width: 1),
-                    ),
-                    child: mediaFiles[index]["isVideo"]
-                        ? VideoPlayerWidget(videoUrl: mediaFiles[index]["url"])
-                        : Image.network(mediaFiles[index]["url"],
-                            fit: BoxFit.cover),
-                  ),
-                );
-              },
+        child: Shimmer.fromColors(
+          baseColor: Colors.grey[300]!,
+          highlightColor: Colors.grey[100]!,
+          child: Container(
+            width: 200,
+            height: 200,
+            color: Colors.white,
+          ),
+        ),
+      )
+          : mediaFiles.isEmpty
+          ? Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.photo_library_outlined,
+              size: 80,
+              color: Colors.grey[400],
             ),
+            const SizedBox(height: 16),
+            Text(
+              'No updates about your project',
+              style: GoogleFonts.roboto(
+                fontSize: 18,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w400,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Media files will appear here when available',
+              style: GoogleFonts.roboto(
+                fontSize: 14,
+                color: Colors.grey[500],
+                fontWeight: FontWeight.w300,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      )
+          : ListView.builder(
+        padding: const EdgeInsets.all(10),
+        itemCount: mediaFiles.length,
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onTap: () => openFullScreenMedia(index),
+            child: Container(
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.grey, width: 1),
+              ),
+              child: mediaFiles[index]["isVideo"]
+                  ? VideoPlayerWidget(videoUrl: mediaFiles[index]["url"])
+                  : Image.network(mediaFiles[index]["url"],
+                  fit: BoxFit.cover),
+            ),
+          );
+        },
+      ),
     );
   }
 }
@@ -165,9 +198,9 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   Widget build(BuildContext context) {
     return _controller.value.isInitialized
         ? AspectRatio(
-            aspectRatio: _controller.value.aspectRatio,
-            child: VideoPlayer(_controller),
-          )
+      aspectRatio: _controller.value.aspectRatio,
+      child: VideoPlayer(_controller),
+    )
         : const Center(child: CircularProgressIndicator());
   }
 }
@@ -249,9 +282,9 @@ class _FullScreenVideoPlayerState extends State<FullScreenVideoPlayer> {
       body: Center(
         child: _controller.value.isInitialized
             ? AspectRatio(
-                aspectRatio: _controller.value.aspectRatio,
-                child: VideoPlayer(_controller),
-              )
+          aspectRatio: _controller.value.aspectRatio,
+          child: VideoPlayer(_controller),
+        )
             : const CircularProgressIndicator(),
       ),
     );

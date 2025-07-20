@@ -105,6 +105,7 @@ class _CustomizeHomeViewState extends State<CustomizeHomeView> {
     final h = MediaQuery.sizeOf(context).height;
 
     return Scaffold(
+
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -112,13 +113,20 @@ class _CustomizeHomeViewState extends State<CustomizeHomeView> {
             child: Column(
               children: [
                 SizedBox(height: h * 0.03),
-                Text(
-                  'Customize your home',
-                  style: GoogleFonts.roboto(
-                    color: Colors.black87,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w500,
-                  ),
+                Row(
+                  children: [
+                    IconButton(onPressed: (){Navigator.pop(context);}, icon: Icon(Icons.arrow_back_ios_new,color: Colors.black,))
+                    ,
+                    SizedBox(width: MediaQuery.of(context).size.width*0.1,)
+                    ,Text(
+                      'Customize your home',
+                      style: GoogleFonts.roboto(
+                        color: Colors.black87,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: h * 0.03),
                 isLoading

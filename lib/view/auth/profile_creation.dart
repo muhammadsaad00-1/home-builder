@@ -46,12 +46,12 @@ class _ProfileCreationViewState extends State<ProfileCreationView> {
                 ),
                 SizedBox(height: h * 0.1),
                 _buildTextField(
-                   false, 'Full name', nameController, Icons.perm_identity_sharp),
+                   false, 'Full name', nameController,20, Icons.perm_identity_sharp),
                 _buildTextField(
-                    false,'Email address', emailController, Icons.email_outlined),
-                _buildTextField(true, "Password", passController, Icons.import_contacts_sharp)     ,
-                _buildTextField(false,'Phone number', contactController, Icons.phone,
-                    keyboardType: TextInputType.number),
+                    false,'Email address', emailController,35, Icons.email_outlined),
+                _buildTextField(true, "Password", passController,12, Icons.import_contacts_sharp)     ,
+                _buildTextField(false,'Phone number', contactController,13, Icons.phone,
+                    keyboardType: TextInputType.number,),
                 SizedBox(height: h * 0.04),
                 Align(
                   alignment: Alignment.center,
@@ -63,8 +63,6 @@ class _ProfileCreationViewState extends State<ProfileCreationView> {
                       final contact = contactController.text.trim();
                       await authViewModel.signup(
                           email, password, name, contact, context);
-                      Utils.flushBarErrorMessage(
-                          'Account created successfully', context);
                     },
                     child: Container(
                       height: 60,
@@ -120,8 +118,7 @@ class _ProfileCreationViewState extends State<ProfileCreationView> {
   }
 
   Widget _buildTextField(
-      bool isPassword,String label, TextEditingController controller, IconData icon,
-      {TextInputType keyboardType = TextInputType.text}) {
+      bool isPassword,String label, TextEditingController controller,int maxchar, IconData icon, {TextInputType keyboardType = TextInputType.text}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -134,9 +131,12 @@ class _ProfileCreationViewState extends State<ProfileCreationView> {
           border: Border.all(color: Colors.black54.withOpacity(0.5))),
           child: TextField(
             controller: controller,
+            maxLength: maxchar,
+
             keyboardType: keyboardType,
             cursorColor: Colors.black,
             decoration: InputDecoration(
+              counterText: '',
               contentPadding:
                   const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               border: InputBorder.none,

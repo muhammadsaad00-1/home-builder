@@ -96,6 +96,8 @@ class _LightingState extends State<Lighting> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        leading: IconButton(onPressed: (){Navigator.pop(context);}, icon: Icon(Icons.arrow_back_ios_new,color: Colors.black,)),
+
         title: Text(
           'Select Lighting Option',
           style: GoogleFonts.roboto(

@@ -1,5 +1,7 @@
 import 'package:bhc/view/auth/loginviewadmin.dart';
 import 'package:bhc/view/auth/loginviewuser.dart';
+import 'package:bhc/view/auth/privacy.dart';
+import 'package:bhc/view/auth/termsandconditions.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -94,24 +96,35 @@ class _LoginFatherState extends State<LoginFather> {
           ),
           SizedBox(height: h * 0.15),
           // Privacy Policy
-          Text(
-            'Privacy policy',
-            style: GoogleFonts.poppins(
-              decoration: TextDecoration.underline,
-              decorationColor: Colors.black87,
-              color: Colors.black87,
-              fontSize: 10,
+          GestureDetector(
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=> PrivacyPolicyScreen()));
+            },
+            child: Text(
+              'Privacy policy',
+              style: GoogleFonts.poppins(
+                decoration: TextDecoration.underline,
+                decorationColor: Colors.black87,
+                color: Colors.black87,
+                fontSize: 10,
+              ),
             ),
           ),
           SizedBox(height: h * 0.01),
           // Terms of Service
-          Text(
-            'Terms of service',
-            style: GoogleFonts.poppins(
-              decoration: TextDecoration.underline,
-              decorationColor: Colors.black87,
-              color: Colors.black87,
-              fontSize: 10,
+          GestureDetector(
+
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=> TermsConditionsScreen()));
+            },
+            child: Text(
+              'Terms of service',
+              style: GoogleFonts.poppins(
+                decoration: TextDecoration.underline,
+                decorationColor: Colors.black87,
+                color:Colors.black87,
+                fontSize: 10,
+              ),
             ),
           ),
         ],

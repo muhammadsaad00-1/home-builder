@@ -45,6 +45,152 @@ class _HomeDetailsViewState extends State<HomeDetailsView> {
     fetchProjectDetails();
   }
 
+  void showDeleteConfirmationDialog() {
+    final w = MediaQuery.of(context).size.width;
+    final h = MediaQuery.of(context).size.height;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Container(
+            width: w * 0.85,
+            padding: EdgeInsets.all(w * 0.06),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(w * 0.04),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Warning Icon
+                Container(
+                  width: w * 0.15,
+                  height: w * 0.15,
+                  decoration: BoxDecoration(
+                    color: Colors.red.shade50,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.warning_amber_rounded,
+                    color: Colors.red.shade600,
+                    size: w * 0.08,
+                  ),
+                ),
+                SizedBox(height: h * 0.025),
+
+                // Title
+                Text(
+                  'Delete Project',
+                  style: GoogleFonts.roboto(
+                    fontSize: w * 0.055,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                ),
+                SizedBox(height: h * 0.015),
+
+                // Message
+                Text(
+                  'Do you want to delete this project?\nThis action cannot be undone.',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.roboto(
+                    fontSize: w * 0.04,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.grey.shade700,
+                    height: 1.4,
+                  ),
+                ),
+                SizedBox(height: h * 0.035),
+
+                // Action Buttons
+                Row(
+                  children: [
+                    // Cancel Button
+                    Expanded(
+                      child: Container(
+                        height: h * 0.055,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.grey.shade300,
+                            width: 1.5,
+                          ),
+                          borderRadius: BorderRadius.circular(w * 0.025),
+                        ),
+                        child: TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          style: TextButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(w * 0.025),
+                            ),
+                          ),
+                          child: Text(
+                            'Cancel',
+                            style: GoogleFonts.roboto(
+                              fontSize: w * 0.042,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey.shade700,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: w * 0.04),
+
+                    // Delete Button
+                    Expanded(
+                      child: Container(
+                        height: h * 0.055,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(w * 0.025),
+                          gradient: LinearGradient(
+                            colors: [Colors.red.shade600, Colors.red.shade700],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                        ),
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            deleteProject();
+                          },
+                          style: TextButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(w * 0.025),
+                            ),
+                          ),
+                          child: Text(
+                            'Delete',
+                            style: GoogleFonts.roboto(
+                              fontSize: w * 0.042,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> deleteProject() async {
     String? userId = FirebaseAuth.instance.currentUser?.uid;
     if (userId == null) return;
@@ -150,7 +296,7 @@ class _HomeDetailsViewState extends State<HomeDetailsView> {
         actions: [
           IconButton(
             icon: const Icon(Icons.close, color: Colors.red, size: 24),
-            onPressed: deleteProject,
+            onPressed: showDeleteConfirmationDialog,
           ),
         ],
       ),

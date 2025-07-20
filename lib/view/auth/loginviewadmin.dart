@@ -1,4 +1,6 @@
+import 'package:bhc/view/auth/privacy.dart';
 import 'package:bhc/view/auth/profile_creation.dart';
+import 'package:bhc/view/auth/termsandconditions.dart';
 import 'package:bhc/view/sitebuilder/sitebuilderhomepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +42,7 @@ class _LoginViewAdminState extends State<LoginViewAdmin> {
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(height: h * 0.05),
                   Center(
@@ -49,9 +51,12 @@ class _LoginViewAdminState extends State<LoginViewAdmin> {
                   SizedBox(height: h * 0.08),
 
                   SizedBox(height: h * 0.03),
-                  Text('Email address',
-                      style: GoogleFonts.poppins(
-                          color: Colors.black, fontSize: 12)),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text('Email address',
+                        style: GoogleFonts.poppins(
+                            color: Colors.black, fontSize: 12)),
+                  ),
                   TextField(
                     keyboardType: TextInputType.emailAddress,
                     controller: emailController,
@@ -71,9 +76,12 @@ class _LoginViewAdminState extends State<LoginViewAdmin> {
                     style: GoogleFonts.poppins(fontSize: 12),
                   ),
                   SizedBox(height: h * 0.02),
-                  Text('Password',
-                      style: GoogleFonts.poppins(
-                          color: Colors.black, fontSize: 12)),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text('Password',
+                        style: GoogleFonts.poppins(
+                            color: Colors.black, fontSize: 12)),
+                  ),
 
                   TextField(
                     keyboardType: TextInputType.emailAddress,
@@ -123,7 +131,7 @@ class _LoginViewAdminState extends State<LoginViewAdmin> {
                         onTap: () async {
                           final email = emailController.text.trim();
                           final password = passController.text.trim();
-
+                          //TODO: asr krna isse
                           if (!email.contains("@bhc")) {
                             Fluttertoast.showToast(
                                 msg: "This email belongs to a User",
@@ -200,51 +208,38 @@ class _LoginViewAdminState extends State<LoginViewAdmin> {
                     ),
                   ),
                   SizedBox(height: h * 0.02),
-                  Row(
-                    children: [
-                      const Expanded(child: Divider()),
-                      const Text("Don't have an account?",
-                          style: TextStyle(
-                              color: Colors.black87,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w400)),
-                      const SizedBox(width: 4),
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ProfileCreationView()));
-                        },
-                        child: const Text("Sign up",
-                            style: TextStyle(
-                                color: Colors.black87,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600)),
-                      ),
-                      const Expanded(child: Divider()),
-                    ],
-                  ),
+
                   SizedBox(height: h * 0.15),
-                  Align(
-                    alignment: Alignment.center,
-                    child: Text('Privacy policy',
-                        style: GoogleFonts.poppins(
-                            decoration: TextDecoration.underline,
-                            decorationColor: Colors.black87,
-                            color: Colors.black87,
-                            fontSize: 10)),
+                  GestureDetector(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=> PrivacyPolicyScreen()));
+                    },
+                    child: Text(
+                      'Privacy policy',
+                      style: GoogleFonts.poppins(
+                        decoration: TextDecoration.underline,
+                        decorationColor: Colors.black87,
+                        color: Colors.black87,
+                        fontSize: 10,
+                      ),
+                    ),
                   ),
                   SizedBox(height: h * 0.01),
-                  Align(
-                    alignment: Alignment.center,
-                    child: Text('Terms of service',
-                        style: GoogleFonts.poppins(
-                            decoration: TextDecoration.underline,
-                            decorationColor: Colors.black87,
-                            color:Colors.black87,
-                            fontSize: 10)),
+                  // Terms of Service
+                  GestureDetector(
+
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=> TermsConditionsScreen()));
+                    },
+                    child: Text(
+                      'Terms of service',
+                      style: GoogleFonts.poppins(
+                        decoration: TextDecoration.underline,
+                        decorationColor: Colors.black87,
+                        color:Colors.black87,
+                        fontSize: 10,
+                      ),
+                    ),
                   ),
                 ],
               ),
