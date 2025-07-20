@@ -156,7 +156,7 @@ class _SiteBuilderHomeState extends State<SiteBuilderHome> {
         msg: "Profile updated",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.grey,
+        backgroundColor: Colors.grey.shade800,
         textColor: Colors.white,
         fontSize: 16.0,
       );
@@ -204,77 +204,80 @@ class _SiteBuilderHomeState extends State<SiteBuilderHome> {
       )
           : filteredProjects.isEmpty
           ? const Center(child: Text('No projects assigned to you.'))
-          : ListView.builder(
-        itemCount: filteredProjects.length,
-        itemBuilder: (context, index) {
-          var project = filteredProjects[index];
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.black87, Colors.grey[700]!],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.15),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
+          : RefreshIndicator(
+        onRefresh: _fetchProjects,
+            child: ListView.builder(
+                    itemCount: filteredProjects.length,
+                    itemBuilder: (context, index) {
+            var project = filteredProjects[index];
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.black87, Colors.grey[700]!],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
-                ],
-              ),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SiteDetails(
-                          projectId: project['projectId'],
-                          projectName: project['projectName'],
-                        ),
-                      ),
-                    );
-                  },
                   borderRadius: BorderRadius.circular(12),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.web,
-                          color: Colors.white.withOpacity(0.8),
-                          size: 24,
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Text(
-                            project['projectName'],
-                            style: const TextStyle(
-                              fontSize: 18,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.15),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SiteDetails(
+                            projectId: project['projectId'],
+                            projectName: project['projectName'],
                           ),
                         ),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          color: Colors.white.withOpacity(0.6),
-                          size: 18,
-                        ),
-                      ],
+                      );
+                    },
+                    borderRadius: BorderRadius.circular(12),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.web,
+                            color: Colors.white.withOpacity(0.8),
+                            size: 24,
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Text(
+                              project['projectName'],
+                              style: const TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            color: Colors.white.withOpacity(0.6),
+                            size: 18,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          );
-        },
-      ),
+            );
+                    },
+                  ),
+          ),
     );
   }
 

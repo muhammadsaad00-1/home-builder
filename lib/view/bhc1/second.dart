@@ -19,6 +19,8 @@ class _SecondScreenState extends State<SecondScreen> {
   String? selectedImage;
   String? selectedImageUrl;
   bool isLoading = true;
+  List<Map<String, String>> images = []; // List of { path, url }
+
 
   @override
   void initState() {
@@ -43,7 +45,7 @@ class _SecondScreenState extends State<SecondScreen> {
         imageRefs = result.items;
       });
 
-      await fetchImagesParallel();
+      await fetchImageDownloadURLs();
     } catch (e) {
       debugPrint("Error fetching images: $e");
       setState(() {
@@ -52,24 +54,30 @@ class _SecondScreenState extends State<SecondScreen> {
     }
   }
 
-  Future<void> fetchImagesParallel() async {
-    final List<Future<void>> futures = imageRefs.map((ref) async {
-      try {
-        Uint8List? data = await ref.getData(1024 * 500);
-        if (data != null && mounted) {
-          setState(() {
-            imageData[ref.fullPath] = data;
+  Future<void> fetchImageDownloadURLs() async {
+    try {
+      final List<Future<void>> futures = imageRefs.map((ref) async {
+        try {
+          final url = await ref.getDownloadURL();
+          images.add({
+            'path': ref.fullPath,
+            'url': url,
           });
+        } catch (e) {
+          debugPrint("Error getting download URL: $e");
         }
-      } catch (e) {
-        debugPrint("Error loading image ${ref.fullPath}: $e");
-      }
-    }).toList();
+      }).toList();
 
-    await Future.wait(futures);
-    setState(() {
-      isLoading = false;
-    });
+      await Future.wait(futures);
+      setState(() {
+        isLoading = false;
+      });
+    } catch (e) {
+      debugPrint("Error fetching URLs: $e");
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   Future<void> saveSelectedFacade() async {
@@ -93,7 +101,7 @@ class _SecondScreenState extends State<SecondScreen> {
         String projectId = projectSnapshot.docs.first.id;
 
         await userDoc.collection('projects').doc(projectId).update({
-          'selectedSecondFacadeImage': selectedImageUrl,
+          'selectedFacadeImage': selectedImageUrl,
           'updatedAt': FieldValue.serverTimestamp(),
         });
 
@@ -147,71 +155,76 @@ class _SecondScreenState extends State<SecondScreen> {
                   )
                 : ListView.builder(
                     padding: const EdgeInsets.all(10),
-                    itemCount: imageRefs.length,
-                    itemBuilder: (context, index) {
-                      String imagePath = imageRefs[index].fullPath;
-                      bool isSelected = selectedImage == imagePath;
-                      String imageName =
-                          imagePath.split('/').last.split('.').first;
+                itemCount: images.length,
+                itemBuilder: (context, index) {
+                  String imagePath = images[index]['path']!;
+                  String imageUrl = images[index]['url']!;
+                  bool isSelected = selectedImage == imagePath;
+                  String imageName = imagePath.split('/').last.split('.').first;
 
-                      return GestureDetector(
-                        onTap: () async {
-                          String downloadUrl =
-                              await imageRefs[index].getDownloadURL();
-
-                          setState(() {
-                            selectedImage = imagePath;
-                            selectedImageUrl = downloadUrl;
-                          });
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(vertical: 8),
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedImage = imagePath;
+                        selectedImageUrl = imageUrl;
+                      });
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(vertical: 8),
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: isSelected ? Colors.black87 : Colors.grey,
+                          width: isSelected ? 3 : 1,
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          ClipRRect(
                             borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: isSelected ? Colors.black87 : Colors.grey,
-                              width: isSelected ? 3 : 1,
+                            child: Image.network(
+                              imageUrl,
+                              fit: BoxFit.cover,
+                              height: 200,
+                              width: double.infinity,
+                              loadingBuilder: (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return const SizedBox(
+                                  height: 200,
+                                  child: Center(child: CircularProgressIndicator()),
+                                );
+                              },
+                              errorBuilder: (context, error, stackTrace) {
+                                return const SizedBox(
+                                  height: 200,
+                                  child: Center(child: Icon(Icons.error)),
+                                );
+                              },
                             ),
                           ),
-                          child: Column(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: imageData.containsKey(imagePath)
-                                    ? Image.memory(
-                                        imageData[imagePath]!,
-                                        fit: BoxFit.cover,
-                                      )
-                                    : const SizedBox(
-                                        height: 200,
-                                        child: Center(
-                                          child: CircularProgressIndicator(),
-                                        ),
-                                      ),
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(8.0),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.white,
+                            ),
+                            child: Text(
+                              imageName,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
                               ),
-                              Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.all(8.0),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Colors.white,
-                                ),
-                                child: Text(
-                                  imageName,
-                                  style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ],
+                              textAlign: TextAlign.center,
+                            ),
                           ),
-                        ),
-                      );
-                    },
+                        ],
+                      ),
+                    ),
+                  );
+                }
                   ),
           ),
           if (selectedImage != null)

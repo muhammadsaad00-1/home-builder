@@ -96,7 +96,6 @@ class _HomeDetailsViewState extends State<HomeDetailsView> {
               'selectedWindow',
               'selectedLighting',
               'selectedFacadeImage',
-              'selectedSecondFacadeImage',
               'selectedFlooring',
               'selectedFloorPlan',
             ];
