@@ -2,16 +2,11 @@ import 'package:bhc/view/auth/forgotpassword.dart';
 import 'package:bhc/view/auth/privacy.dart';
 import 'package:bhc/view/auth/profile_creation.dart';
 import 'package:bhc/view/auth/termsandconditions.dart';
+import 'package:bhc/view/bhc2/home.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import '../../resources/components/appColors.dart';
-import '../../resources/components/customTextField.dart';
-import '../../utils/utils.dart';
-import '../../view_model/auth_view_model.dart';
-import '../bhc1/floor_selection.dart';
-import 'forgotpassword.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginViewUser extends StatefulWidget {
   LoginViewUser({super.key});
@@ -24,11 +19,120 @@ class _LoginViewUserState extends State<LoginViewUser> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   bool showpass = true;
+  bool isLoading = false;
+
+  // Firebase login method
+  Future<void> _loginWithFirebase() async {
+    final email = emailController.text.trim();
+    final password = passController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      _showToast("Please fill in all fields", Colors.red);
+      return;
+    }
+
+    if (email.contains("@asr")) {
+      _showToast("This email belongs to an Admin", Colors.red);
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      // Sign in with Firebase
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      User? user = userCredential.user;
+
+      if (user != null) {
+        // Check if email is verified
+        if (!user.emailVerified) {
+          // Send verification email
+          await user.sendEmailVerification();
+
+          _showToast(
+            "Please verify your email. A verification link has been sent to your email address.",
+            Colors.grey,
+          );
+
+          // Sign out the user since email is not verified
+          await _auth.signOut();
+          return;
+        }
+
+        // Email is verified, proceed with login
+        _showToast("Login successful!", Colors.black87);
+
+        // Navigate to the main screen (adjust route as needed)
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomeView()),
+          );
+        }
+      }
+    } on FirebaseAuthException catch (e) {
+      String errorMessage;
+      switch (e.code) {
+        case 'user-not-found':
+          errorMessage = "No user found for that email.";
+          break;
+        case 'wrong-password':
+          errorMessage = "Wrong password provided.";
+          break;
+        case 'invalid-email':
+          errorMessage = "The email address is badly formatted.";
+          break;
+        case 'user-disabled':
+          errorMessage = "This user account has been disabled.";
+          break;
+        case 'too-many-requests':
+          errorMessage = "Too many unsuccessful login attempts. Please try again later.";
+          break;
+        case 'network-request-failed':
+          errorMessage = "Network error. Please check your internet connection.";
+          break;
+        default:
+          errorMessage = "An error occurred. Please try again.";
+      }
+      _showToast(errorMessage, Colors.red);
+    } catch (e) {
+      _showToast("An unexpected error occurred. Please try again.", Colors.red);
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  // Custom toast method with gray background for email verification
+  void _showToast(String message, Color backgroundColor) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: backgroundColor,
+      textColor: Colors.white,
+      fontSize: 14.0,
+      timeInSecForIosWeb: 1
+
+    );
+  }
+
+  // Email validation
+  bool _isValidEmail(String email) {
+    return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final authViewModel = Provider.of<AuthViewModel>(context);
     final w = MediaQuery.sizeOf(context).width;
     final h = MediaQuery.sizeOf(context).height;
 
@@ -56,15 +160,22 @@ class _LoginViewUserState extends State<LoginViewUser> {
                   Text('Email address',
                       style: GoogleFonts.poppins(
                           color: Colors.black, fontSize: 12)),
-                  TextField(
+                  TextFormField(
                     keyboardType: TextInputType.emailAddress,
                     controller: emailController,
                     cursorColor: Colors.black,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your email';
+                      }
+                      if (!_isValidEmail(value)) {
+                        return 'Please enter a valid email address';
+                      }
+                      return null;
+                    },
                     decoration: InputDecoration(
-                      
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 10),
-
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
@@ -78,23 +189,29 @@ class _LoginViewUserState extends State<LoginViewUser> {
                   Text('Password',
                       style: GoogleFonts.poppins(
                           color: Colors.black, fontSize: 12)),
-
-                  TextField(
-                    keyboardType: TextInputType.emailAddress,
+                  TextFormField(
                     controller: passController,
                     cursorColor: Colors.black,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your password';
+                      }
+                      if (value.length < 6) {
+                        return 'Password must be at least 6 characters';
+                      }
+                      return null;
+                    },
                     decoration: InputDecoration(
                       suffixIcon: IconButton(
                           splashColor: Colors.transparent,
                           hoverColor: Colors.transparent,
                           onPressed: (){
-                        setState(() {
-                          showpass = !showpass;
-                        });
-                      }, icon: Icon(showpass?Icons.remove_red_eye_outlined:Icons.remove_red_eye)),
+                            setState(() {
+                              showpass = !showpass;
+                            });
+                          }, icon: Icon(showpass?Icons.visibility_off:Icons.visibility)),
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 10),
-
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
@@ -104,9 +221,8 @@ class _LoginViewUserState extends State<LoginViewUser> {
                     ),
                     style: GoogleFonts.poppins(fontSize: 12),
                     obscureText: showpass,
-
                   ),
-                  
+
                   SizedBox(height: h * 0.01),
                   InkWell(
                     splashColor: Colors.transparent,
@@ -116,7 +232,6 @@ class _LoginViewUserState extends State<LoginViewUser> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => ForgotPasswordView()));
-                      // Handle Forgot Password
                     },
                     child: const Align(
                       alignment: Alignment.topRight,
@@ -135,21 +250,9 @@ class _LoginViewUserState extends State<LoginViewUser> {
                   Align(
                     alignment: Alignment.center,
                     child: InkWell(
-                      onTap: () async {
-                        final email = emailController.text.trim();
-                        final password = passController.text.trim();
-
-                        if (email.contains("@asr")) {
-                          Fluttertoast.showToast(
-                            msg: "This email belongs to an Admin",
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.BOTTOM,
-                          );
-                          return;
-                        }
-
+                      onTap: isLoading ? null : () async {
                         if (_formKey.currentState!.validate()) {
-                          await authViewModel.login(email, password, context);
+                          await _loginWithFirebase();
                         }
                       },
                       child: Container(
@@ -157,11 +260,15 @@ class _LoginViewUserState extends State<LoginViewUser> {
                         width: w * 0.9,
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.black87,
+                          color: isLoading ? Colors.grey : Colors.black87,
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        child: const Center(
-                          child: Text(
+                        child: Center(
+                          child: isLoading
+                              ? const CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          )
+                              : const Text(
                             "Log in",
                             style: TextStyle(
                               color: Colors.white,
@@ -189,7 +296,7 @@ class _LoginViewUserState extends State<LoginViewUser> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    const ProfileCreationView()),
+                                const ProfileCreationView()),
                           );
                         },
                         child: const Text("Sign up",
@@ -219,11 +326,9 @@ class _LoginViewUserState extends State<LoginViewUser> {
                     ),
                   ),
                   SizedBox(height: h * 0.01),
-                  // Terms of Service
                   Align(
                     alignment: Alignment.center,
                     child: GestureDetector(
-
                       onTap: (){
                         Navigator.push(context, MaterialPageRoute(builder: (context)=> TermsConditionsScreen()));
                       },
@@ -245,5 +350,12 @@ class _LoginViewUserState extends State<LoginViewUser> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passController.dispose();
+    super.dispose();
   }
 }

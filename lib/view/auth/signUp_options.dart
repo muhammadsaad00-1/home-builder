@@ -1,8 +1,10 @@
 import 'package:bhc/view/auth/privacy.dart';
 import 'package:bhc/view/auth/profile_creation.dart';
 import 'package:bhc/view/auth/termsandconditions.dart';
+import 'package:bhc/view/bhc2/home.dart';
 import 'package:bhc/view_model/services/auth_services.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -158,32 +160,28 @@ class _SignupOptionsViewState extends State<SignupOptionsView> {
 
           // Show success message
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Account created successfully!'),
-                backgroundColor: Colors.green,
-              ),
+            Fluttertoast.showToast(msg: "Account Created",gravity: ToastGravity.BOTTOM,fontSize: 16,toastLength: Toast.LENGTH_SHORT,backgroundColor: Colors.black87,textColor: Colors.white);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const ProfileCreationView()),
             );
           }
         } else {
           // Show welcome back message for existing users
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Welcome back!'),
-                backgroundColor: Colors.blue,
-              ),
+            Fluttertoast.showToast(msg: "Welcome Back",gravity: ToastGravity.BOTTOM,fontSize: 16,toastLength: Toast.LENGTH_SHORT,backgroundColor: Colors.black87,textColor: Colors.white);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const HomeView()),
             );
           }
         }
 
         // Navigate to the next screen (you can replace this with your desired navigation)
         if (mounted) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const ProfileCreationView()),
-          );
+
         }
       }
     } catch (e) {
@@ -214,7 +212,6 @@ class _SignupOptionsViewState extends State<SignupOptionsView> {
         'uid': user.uid,
         'createdAt': FieldValue.serverTimestamp(),
         'displayName': user.displayName,
-        'photoURL': user.photoURL,
         'provider': 'google',
       }, SetOptions(merge: true));
 
@@ -252,16 +249,5 @@ class _SignupOptionsViewState extends State<SignupOptionsView> {
     );
   }
 
-  /// **Reusable Method for Footer Text**
-  Widget _buildFooterText(String text) {
-    return Text(
-      text,
-      style: GoogleFonts.poppins(
-        decoration: TextDecoration.underline,
-        decorationColor: Colors.black87,
-        color: Colors.black87,
-        fontSize: 10,
-      ),
-    );
-  }
+
 }

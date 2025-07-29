@@ -131,8 +131,7 @@ class _LoginViewAdminState extends State<LoginViewAdmin> {
                         onTap: () async {
                           final email = emailController.text.trim();
                           final password = passController.text.trim();
-                          //TODO: asr krna isse
-                          if (!email.contains("@bhc")) {
+                          if (!email.contains("@asr")) {
                             Fluttertoast.showToast(
                                 msg: "This email belongs to a User",
                                 toastLength: Toast.LENGTH_SHORT,
